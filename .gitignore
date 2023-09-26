@@ -1,5 +1,4 @@
 build/*
-cmake-*
 perf.data*
 .idea
 .vscode
