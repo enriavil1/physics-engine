@@ -1,8 +1,8 @@
 
 [submodule "imgui"]
 	path = imgui
-	url = https://github.com/ocornut/imgui
-	branch = docking
+	url = https://github.com/enriavil1/imgui-cmake.git 	
+  branch = docking
 
 [submodule "SDL"]
 	path = SDL
