@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "imgui/imgui.h"
-#include "objects/vertices.hpp"
+#include "objects/vertex.hpp"
 
 int main() {
   std::cout << "Hello World!"

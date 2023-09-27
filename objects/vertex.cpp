@@ -1,4 +1,4 @@
-#include "./vertices.hpp"
+#include "./vertex.hpp"
 #include <vector>
 
 Vertex::Vertex(float x, float y) {
