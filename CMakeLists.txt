@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(${PROJECT_NAME} main.cpp)
 
 message(STATUS "[${PROJECT_NAME}] Adding SDL3")
-add_subdirectory(SDL)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SDL)
 
 # check the operating system set up
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -22,4 +22,5 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 endif()
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 
