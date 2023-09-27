@@ -21,6 +21,20 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
   set(OPERATING_SYSTEM "Win32")
 endif()
 
+message(STATUS "[${PROJECT_NAME}] adding imgui as subdirectory")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+
+message(STATUS "[${PROJECT_NAME}] linking imgui library")
 target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
+
+message(STATUS "[${PROJECT_NAME}] adding forces as subdirectory")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/forces)
+message(STATUS "[${PROJECT_NAME}] linking Forces library")
+target_link_libraries(${PROJECT_NAME} PUBLIC Forces)
+
+
+message(STATUS "[${PROJECT_NAME}] adding objects as subdirectory")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/objects)
+message(STATUS "[${PROJECT_NAME}] linking Objects library")
+target_link_libraries(${PROJECT_NAME} PUBLIC Objects)
 
