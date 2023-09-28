@@ -1,4 +1,6 @@
 build/*
+/debug
+
 perf.data*
 .idea
 .vscode
@@ -6,4 +8,7 @@ perf.data*
 *.code-workspace
 *.hrd
 *.stdout
+
 results/
+
+imgui.ini

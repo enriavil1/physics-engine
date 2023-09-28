@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include "imgui/imgui.h"
-#include "objects/vertex.hpp"
+#include "./views/main/MainView.hpp"
 
 int main() {
-  std::cout << "Hello World!"
-            << "\n";
+  // this is mac versioning add other versions
+  const char *glsl_version = "#version 150";
 
-  auto vertex = Vertex(0, 0);
-  std::cout << "Created vertex with x-cordinate: " << vertex.GetX()
-            << " and y-cordinate: " << vertex.GetY() << "\n";
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  auto main_view = MainView(glsl_version, clear_color);
+  main_view.runMainLoop();
 }
