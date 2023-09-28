@@ -1,12 +1,14 @@
 project(Views)
 
-file(GLOB HH_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/**/*.hpp")
-file(GLOB CXX_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp")
+# Collect header and source files using glob
+file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-add_library(${PROJECT_NAME} ${HH_FILES} ${CXX_FILES})
-message(STATUS "[${PROJECT_NAME}] created library")
+# Create a library target
+add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 
-message(STATUS "[${PROJECT_NAME}] linking library to SDL")
+# Provide a clear message indicating the library creation
+message(STATUS "[${PROJECT_NAME}] Library created")
+
+# Link the library to dependencies (e.g., SDL3 and ImGui)
 target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 imgui)
