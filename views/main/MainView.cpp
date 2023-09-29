@@ -2,16 +2,17 @@
 #include "../ViewStats.cpp"
 
 #include <iostream>
+#include <memory>
 
 MainView::MainView(const char *glsl_version, ImVec4 clear_color) {
   this->glsl_version = glsl_version;
   this->clear_color = clear_color;
 }
 
-std::pair<SDL_Window *, SDL_GLContext *> MainView::sdl_init() {
+SDL_Window *MainView::sdl_init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
-    return {nullptr, nullptr};
+    return nullptr;
   }
 
   // This is a Mac Setup
@@ -33,17 +34,11 @@ std::pair<SDL_Window *, SDL_GLContext *> MainView::sdl_init() {
       SDL_CreateWindow("Physics Engine", 1280, 720, window_flags);
   if (window == nullptr) {
     printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
-    return {nullptr, nullptr};
+    return nullptr;
   }
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-  SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-  SDL_GL_MakeCurrent(window, gl_context);
-  // Enable vsync
-  SDL_GL_SetSwapInterval(1);
-  SDL_ShowWindow(window);
-
-  return {window, &gl_context};
+  return window;
 }
 
 ImGuiIO *MainView::setUpImGui() {
@@ -89,12 +84,16 @@ void MainView::stopMainLoop(SDL_Window *window, SDL_GLContext gl_context) {
   SDL_Quit();
 }
 
-// TODO enriavil1: Fix runMainLoop so whenever the loop is ended we dont get a
+// TODO(enriavil1): Fix runMainLoop so whenever the loop is ended we dont get a
 // segmentation fault
 void MainView::runMainLoop() {
-  std::pair<SDL_Window *, SDL_GLContext *> pair = this->sdl_init();
-  SDL_Window *window = pair.first;
-  SDL_GLContext &gl_context = *pair.second;
+  SDL_Window *window = this->sdl_init();
+
+  SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+  SDL_GL_MakeCurrent(window, gl_context);
+  // Enable vsync
+  SDL_GL_SetSwapInterval(1);
+  SDL_ShowWindow(window);
 
   ImGuiIO *io = this->setUpImGui();
   auto &io_ref = *io;

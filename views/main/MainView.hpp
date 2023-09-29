@@ -17,7 +17,7 @@ private:
 
   ImVec4 clear_color;
 
-  std::pair<SDL_Window *, SDL_GLContext *> sdl_init();
+  SDL_Window *sdl_init();
   ImGuiIO *setUpImGui();
   void render(const ImGuiIO &io, SDL_Window *window);
   void stopMainLoop(SDL_Window *window, SDL_GLContext gl_context);
