@@ -9,17 +9,22 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
-# Define build options (e.g., build with SDL, ImGui, Forces, and Objects)
+# Define build options (e.g., build with SDL, ImGui)
 option(BUILD_SDL "Build with SDL support" ON)
 option(BUILD_IMGUI "Build with ImGui support" ON)
-option(BUILD_FORCES "Build with Forces library" ON)
-option(BUILD_OBJECTS "Build with Objects library" ON)
+option(BUILD_OPENGL "Build with OpenGL support" ON)
 
 # Check the operating system setup
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(OPERATING_SYSTEM "Apple")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
   set(OPERATING_SYSTEM "Win32")
+endif()
+
+if(BUILD_OPENGL)
+  message(STATUS "[${PROJECT_NAME}] Adding OpenGL library")
+  find_package(OpenGL REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL)
 endif()
 
 # Add and link dependencies based on build options
@@ -34,14 +39,13 @@ if(BUILD_IMGUI)
   target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 endif()
 
-if(BUILD_FORCES)
-  message(STATUS "[${PROJECT_NAME}] Adding forces as subdirectory")
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/forces)
-  target_link_libraries(${PROJECT_NAME} PUBLIC Forces)
-endif()
+message(STATUS "[${PROJECT_NAME}] Adding forces as subdirectory")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/forces)
 
-if(BUILD_OBJECTS)
-  message(STATUS "[${PROJECT_NAME}] Adding objects as subdirectory")
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/objects)
-  target_link_libraries(${PROJECT_NAME} PUBLIC Objects)
-endif()
+message(STATUS "[${PROJECT_NAME}] Adding objects as subdirectory")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/objects)
+
+message(STATUS "[${PROJECT_NAME}] Adding views as subdirectory")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/views)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC Forces Objects Views)
