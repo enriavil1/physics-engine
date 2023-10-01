@@ -6,8 +6,6 @@
 #include <iostream>
 #include <memory>
 
-ImU32 WHITE = IM_COL32(255, 255, 255, 255);
-
 void MainView::createWindow() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
@@ -44,6 +42,7 @@ void MainView::createWindow() {
   this->window = window;
   this->gl_context = gl_context;
 
+  this->setUpImGui();
   this->is_running = true;
 }
 
@@ -51,6 +50,12 @@ void MainView::setUpImGui() {
   if (this->glsl_version == nullptr) {
     std::cerr << "[" << this->view_name
               << "] failed setUpImGui(): missing glsl_version\n";
+    return;
+  }
+
+  if (this->window == nullptr) {
+    std::cerr << "[" << this->view_name
+              << "] failed setUpImGui(): missing window\n";
     return;
   }
 
@@ -97,15 +102,6 @@ void MainView::render() {
   glClear(GL_COLOR_BUFFER_BIT);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   SDL_GL_SwapWindow(this->window);
-}
-
-void MainView::drawCircle() {
-  ImVec2 window_pos = ImGui::GetWindowPos();
-  ImVec2 window_size = ImGui::GetWindowSize();
-  ImVec2 window_center = ImVec2(window_pos.x + window_size.x * 0.5f,
-                                window_pos.y + window_size.y * 0.5f);
-  ImGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * .05,
-                                            WHITE, 0, 1.5);
 }
 
 void MainView::quitView() {
