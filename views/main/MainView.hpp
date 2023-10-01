@@ -10,19 +10,48 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 
+typedef unsigned int uint;
+
 class MainView {
 private:
   const char *view_name = "MainView";
   const char *glsl_version;
 
+  bool is_running = false;
+
+  unsigned int width;
+  unsigned int height;
+
+  SDL_Event event;
+
+  SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(
+      SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN);
+
+  SDL_Window *window;
+  SDL_GLContext gl_context;
+  SDL_Renderer *sdl_renderer;
+
+  ImGuiIO io;
   ImVec4 clear_color;
 
-  SDL_Window *sdl_init();
-  ImGuiIO *setUpImGui();
-  void render(const ImGuiIO &io, SDL_Window *window);
-  void stopMainLoop(SDL_Window *window, SDL_GLContext gl_context);
-
 public:
-  MainView(const char *glsl_version, ImVec4 clear_color);
-  void runMainLoop();
+  MainView(const char *glsl_version, ImVec4 clear_color, unsigned int width,
+           unsigned int height) {
+    this->width = width;
+    this->height = height;
+
+    this->glsl_version = glsl_version;
+    this->clear_color = clear_color;
+  };
+
+  bool getIsRunning() { return this->is_running; }
+  ImGuiIO &getImGuiIO() { return this->io; }
+
+  void createWindow();
+  void setUpImGui();
+  void processEvent();
+  void newFrame();
+  void drawCircle();
+  void render();
+  void quitView();
 };
