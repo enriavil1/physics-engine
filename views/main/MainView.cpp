@@ -6,6 +6,8 @@
 #include <iostream>
 #include <memory>
 
+ImU32 WHITE = IM_COL32(255, 255, 255, 255);
+
 void MainView::createWindow() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
@@ -42,15 +44,6 @@ void MainView::createWindow() {
   this->window = window;
   this->gl_context = gl_context;
 
-  this->sdl_renderer = SDL_CreateRenderer(
-      window, NULL, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-  if (this->sdl_renderer == nullptr) {
-    std::cerr << "[" << this->view_name << "]"
-              << "failed CreateRenderer: couldn't create sdl renderer err= "
-              << SDL_GetError() << "\n";
-  }
-
   this->is_running = true;
 }
 
@@ -76,7 +69,7 @@ void MainView::setUpImGui() {
   this->io = io;
 
   // Setup Platform/Renderer backends
-  ImGui_ImplSDL3_InitForOpenGL(window, gl_context);
+  ImGui_ImplSDL3_InitForOpenGL(this->window, this->gl_context);
   ImGui_ImplOpenGL3_Init(this->glsl_version);
 }
 
@@ -106,13 +99,21 @@ void MainView::render() {
   SDL_GL_SwapWindow(this->window);
 }
 
+void MainView::drawCircle() {
+  ImVec2 window_pos = ImGui::GetWindowPos();
+  ImVec2 window_size = ImGui::GetWindowSize();
+  ImVec2 window_center = ImVec2(window_pos.x + window_size.x * 0.5f,
+                                window_pos.y + window_size.y * 0.5f);
+  ImGui::GetBackgroundDrawList()->AddCircle(window_center, window_size.x * .05,
+                                            WHITE, 0, 1.5);
+}
+
 void MainView::quitView() {
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 
-  SDL_DestroyRenderer(this->sdl_renderer);
   SDL_GL_DeleteContext(this->gl_context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();

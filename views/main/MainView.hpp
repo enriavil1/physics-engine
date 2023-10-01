@@ -10,6 +10,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 
+typedef unsigned int uint;
+
 class MainView {
 private:
   const char *view_name = "MainView";
@@ -49,6 +51,7 @@ public:
   void setUpImGui();
   void processEvent();
   void newFrame();
+  void drawCircle();
   void render();
   void quitView();
 };
