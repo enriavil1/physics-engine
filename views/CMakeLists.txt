@@ -10,5 +10,8 @@ add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 # Provide a clear message indicating the library creation
 message(STATUS "[${PROJECT_NAME}] Library created")
 
+message(STATUS "[${PROJECT_NAME}] Adding OpenGL library")
+find_package(OpenGL REQUIRED)
+
 # Link the library to dependencies (e.g., SDL3 and ImGui)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 imgui OpenGL::GL)
