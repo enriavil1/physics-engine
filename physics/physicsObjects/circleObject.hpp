@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../forces/gravity.hpp"
-#include "./physicsObject.hpp"
+#include "../../forces/Gravity.hpp"
+#include "./PhysicsObject.hpp"
 #include <chrono>
 
 class CircleObject : PhysicsObject {
