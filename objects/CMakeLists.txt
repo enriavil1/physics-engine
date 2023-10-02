@@ -10,6 +10,8 @@ add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 # Provide a clear message indicating the library creation
 message(STATUS "[${PROJECT_NAME}] Library created")
 
+set_target_properties(Objects PROPERTIES LINKER_LANGUAGE CXX)
+
 # Set include directories for the library (if needed)
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

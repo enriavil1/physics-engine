@@ -1,5 +1,7 @@
+#include <chrono>
 #include <iostream>
 
+#include "./objects/circleObject.hpp"
 #include "./views/ViewStats.cpp"
 #include "./views/main/MainView.hpp"
 
@@ -11,9 +13,11 @@ int main() {
   uint height = 720;
 
   auto main_view = MainView(glsl_version, clear_color, width, height);
-
   main_view.createWindow();
-  main_view.setUpImGui();
+
+  auto circle = CircleObject(1.0, (width * 1.0) / 2, 25, 25);
+
+  auto last_update = std::chrono::system_clock::now();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -21,8 +25,14 @@ int main() {
     main_view.newFrame();
     auto statsModal = ViewPort::ViewStats();
     statsModal.render();
+    circle.draw();
 
-    main_view.drawCircle();
+    std::chrono::duration<double> elapsed_seconds =
+        std::chrono::system_clock::now() - last_update;
+
+    if (elapsed_seconds.count() >= 1) {
+      circle.update(elapsed_seconds.count());
+    }
 
     main_view.render();
   }

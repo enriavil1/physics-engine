@@ -29,7 +29,6 @@ private:
 
   SDL_Window *window;
   SDL_GLContext gl_context;
-  SDL_Renderer *sdl_renderer;
 
   ImGuiIO io;
   ImVec4 clear_color;

@@ -1,5 +1,3 @@
+#pragma once
 
-class Force {
-public:
-  void apply(float *x, float *y) const {};
-};
+class Force {};
