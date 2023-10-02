@@ -3,6 +3,8 @@
 #include <string>
 #include <utility>
 
+#include "../ViewPort.hpp"
+
 #include "../../imgui/backends/imgui_impl_opengl3.h"
 #include "../../imgui/backends/imgui_impl_sdl3.h"
 #include "../../imgui/imgui.h"
@@ -12,7 +14,7 @@
 
 typedef unsigned int uint;
 
-class MainView {
+class MainView : ViewPort {
 private:
   const char *view_name = "MainView";
   const char *glsl_version;

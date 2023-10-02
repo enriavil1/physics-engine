@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../forces/gravity.hpp"
+#include "../../forces/gravity.hpp"
 #include "./physicsObject.hpp"
 #include <chrono>
 

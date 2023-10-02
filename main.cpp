@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "./objects/circleObject.hpp"
+#include "./physics/physicsObjects/circleObject.hpp"
 #include "./views/ViewStats.cpp"
 #include "./views/main/MainView.hpp"
 
@@ -23,7 +23,7 @@ int main() {
     main_view.processEvent();
     // Start the Dear ImGui frame
     main_view.newFrame();
-    auto statsModal = ViewPort::ViewStats();
+    auto statsModal = ViewStats();
     statsModal.render();
     circle.draw();
 
