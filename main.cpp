@@ -5,8 +5,6 @@
 #include "./views/ViewStats.cpp"
 #include "./views/main/MainView.hpp"
 
-#include <SDL3/SDL.h>
-
 int main() {
   // this is mac versioning add other versions
   const char *glsl_version = "#version 150";
@@ -17,7 +15,7 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto circle = CircleObject(1.0, (width * 1.0) / 2, 0, 500);
+  auto circle = CircleObject(1.0, (width * 1.0) / 2, 25, 25);
 
   auto last_update = std::chrono::system_clock::now();
 

@@ -1,10 +1,7 @@
 #include "./MainView.hpp"
 #include "../ViewStats.cpp"
 
-#include <OpenGL/gl3.h>
-
 #include <iostream>
-#include <memory>
 
 void MainView::createWindow() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
