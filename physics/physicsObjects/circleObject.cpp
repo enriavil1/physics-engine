@@ -1,4 +1,5 @@
 #include "./CircleObject.hpp"
+
 #include <iostream>
 
 void CircleObject::draw() {
