@@ -43,9 +43,9 @@ message(STATUS "[${PROJECT_NAME}] Adding forces as subdirectory")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/forces)
 
 message(STATUS "[${PROJECT_NAME}] Adding objects as subdirectory")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/objects)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/physics)
 
 message(STATUS "[${PROJECT_NAME}] Adding views as subdirectory")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/views)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Forces Objects Views)
+target_link_libraries(${PROJECT_NAME} PUBLIC Forces Physics Views)

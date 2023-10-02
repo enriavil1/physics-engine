@@ -1,7 +1,6 @@
 #include "./ViewPort.hpp"
 #include <iostream>
 
-namespace ViewPort {
 class ViewStats : ViewPort {
 private:
 public:
@@ -29,4 +28,3 @@ public:
     ImGui::End();
   }
 };
-} // namespace ViewPort

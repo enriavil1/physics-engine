@@ -1,4 +1,4 @@
-project(Objects)
+project(Physics)
 
 # Collect header and source files using glob
 file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
@@ -10,7 +10,7 @@ add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 # Provide a clear message indicating the library creation
 message(STATUS "[${PROJECT_NAME}] Library created")
 
-set_target_properties(Objects PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 # Set include directories for the library (if needed)
 target_include_directories(
