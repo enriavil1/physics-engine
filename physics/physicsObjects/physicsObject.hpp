@@ -2,7 +2,8 @@
 
 #include <vector>
 
-#include "../../forces/force.hpp"
+#include "../../forces/Force.hpp"
+
 #include "../../imgui/imgui.h"
 
 namespace ObjectColors {
