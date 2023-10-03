@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+ImVec2 CircleObject::getDistanceFromCenter() {
+  return ImVec2(this->radius, this->radius);
+}
+
 void CircleObject::draw() {
   ImGui::GetBackgroundDrawList()->AddCircle(this->position, this->radius,
                                             ObjectColors::WHITE, 0, 1.5);
@@ -40,4 +44,6 @@ void CircleObject::update(double dt) {
 
   this->acceleration = ImVec2(this->acceleration.x + new_acc.x,
                               this->acceleration.y + this->acceleration.y);
+
+  std::cout << "newV y " << new_velocity_y << std::endl;
 }

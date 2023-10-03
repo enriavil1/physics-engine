@@ -2,7 +2,7 @@
 
 #include "./Force.hpp"
 
-class Gravity : Force {
+class Gravity : public Force {
 public:
   static constexpr ImVec2 gravity_acc = ImVec2(0, 9.81f);
   static constexpr float drag_coeffiecient = 0.5f;

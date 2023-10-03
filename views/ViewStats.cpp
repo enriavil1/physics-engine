@@ -1,3 +1,4 @@
+#include "../physics/systemState.hpp"
 #include "./ViewPort.hpp"
 #include <iostream>
 
@@ -24,6 +25,7 @@ public:
     ImGui::SetNextWindowSize(ImVec2(100, 100));
 
     ImGui::Begin("Stats", __null, window_flags);
+    ImGui::Text("%d Objects", SystemState::GetObjectAmount());
     ImGui::Text("%.1f FPS", io.Framerate);
     ImGui::End();
   }

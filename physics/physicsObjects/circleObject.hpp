@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../forces/Gravity.hpp"
+#include "../../forces/gravity.hpp"
 #include "./PhysicsObject.hpp"
 
 #include <chrono>
 
-class CircleObject : PhysicsObject {
+class CircleObject : public PhysicsObject {
 private:
   float radius = 0.0;
 
@@ -16,6 +16,7 @@ public:
     this->position = ImVec2(x, y);
   }
 
+  ImVec2 getDistanceFromCenter();
   void draw();
 
   void update(double dt);
