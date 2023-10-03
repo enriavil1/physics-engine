@@ -3,7 +3,7 @@
 #include <chrono>
 #include <vector>
 
-#include "./physicsObjects/PhysicsObject.hpp"
+#include "./physicsObjects/physicsObject.hpp"
 
 typedef unsigned int uint;
 

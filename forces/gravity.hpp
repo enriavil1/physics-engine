@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./Force.hpp"
+#include "./force.hpp"
 
 class Gravity : public Force {
 public:

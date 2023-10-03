@@ -3,7 +3,7 @@
 #include "../imgui/imgui.h"
 
 namespace ForceConstants {
-const unsigned int PIXELS_PER_METER = 50;
+const unsigned int PIXELS_PER_METER = 100;
 } // namespace ForceConstants
 
 class Force {

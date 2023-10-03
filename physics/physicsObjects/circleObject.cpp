@@ -1,4 +1,4 @@
-#include "./CircleObject.hpp"
+#include "./circleObject.hpp"
 
 #include <iostream>
 
@@ -14,10 +14,17 @@ void CircleObject::draw() {
 void CircleObject::update(double dt) {
   auto new_acc = Gravity::apply(this->mass, this->velocity.y);
 
-  float new_position_x = this->position.x + this->velocity.x * dt +
-                         (this->acceleration.x * dt) * 0.5f;
-  float new_position_y = this->position.y + this->velocity.y * dt +
-                         (this->acceleration.y * dt) * 0.5f;
+  // using pixels per meter since position is in pixels
+  // // we only need to multiple by pixels/meter to convert veloxity
+  float new_position_x =
+      this->position.x +
+      this->velocity.x * ForceConstants::PIXELS_PER_METER * dt +
+      (this->acceleration.x * dt) * 0.5f;
+  float new_position_y =
+      this->position.y +
+      this->velocity.y * ForceConstants::PIXELS_PER_METER * dt +
+      (this->acceleration.y * dt) * 0.5f;
+
   ImVec2 window_size = ImGui::GetMainViewport()->Size;
 
   // the radius is the distance from the center of the circle to the edge
@@ -44,6 +51,4 @@ void CircleObject::update(double dt) {
 
   this->acceleration = ImVec2(this->acceleration.x + new_acc.x,
                               this->acceleration.y + this->acceleration.y);
-
-  std::cout << "newV y " << new_velocity_y << std::endl;
 }

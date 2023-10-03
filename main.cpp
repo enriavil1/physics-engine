@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "./physics/physicsObjects/CircleObject.hpp"
+#include "./physics/physicsObjects/circleObject.hpp"
 #include "./physics/systemState.hpp"
 #include "./views/ViewStats.cpp"
 #include "./views/main/MainView.hpp"
@@ -16,9 +16,9 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto circle = CircleObject(1.0, (width * 1.0) / 2, 25, 25);
+  int count = 0;
 
-  SystemState::AddObject(&circle);
+  auto last = std::chrono::system_clock::now();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -27,6 +27,14 @@ int main() {
     auto statsModal = ViewStats();
     statsModal.render();
 
+    std::chrono::duration<double> elapsed_seconds =
+        std::chrono::system_clock::now() - last;
+    if (elapsed_seconds.count() > 1.5) {
+      SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
+      last = std::chrono::system_clock::now();
+    }
+
+    SystemState::ResolveCollisions();
     SystemState::Draw();
     SystemState::Update();
 

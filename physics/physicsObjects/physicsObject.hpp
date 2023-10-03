@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../../forces/Force.hpp"
+#include "../../forces/force.hpp"
 
 #include "../../imgui/imgui.h"
 
