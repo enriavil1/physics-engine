@@ -12,15 +12,12 @@ private:
   static std::chrono::time_point<std::chrono::system_clock> last_update;
   static std::vector<PhysicsObject *> objects;
 
-  static void makeSureObjectInBound(ImVec2 *pos,
-                                    const ImVec2 &distance_from_center);
-
 public:
   static uint GetObjectAmount();
   static void AddObject(PhysicsObject *object);
 
   static void Draw();
-  static void Update();
+  static void Update(const float dt);
 
   static void ResolveCollisions();
 };

@@ -25,19 +25,14 @@ void SystemState::Draw() {
   }
 }
 
-void SystemState::Update() {
-  auto current_time = std::chrono::system_clock::now();
-
-  std::chrono::duration<double> elapsed_seconds = current_time - last_update;
-
-  auto elapsed_seconds_count = elapsed_seconds.count();
+void SystemState::Update(const float dt) {
 
   Gravity gravity;
   for (PhysicsObject *obj : SystemState::objects) {
-    obj->update(elapsed_seconds_count);
+    obj->update(dt);
     obj->applyForce(gravity);
+    obj->constraint(obj->getPosition());
   }
-  SystemState::last_update = current_time;
 }
 
 void SystemState::ResolveCollisions() {
@@ -51,66 +46,60 @@ void SystemState::ResolveCollisions() {
         continue;
       }
 
-      ImVec2 position_1 = obj->getPosition();
-      ImVec2 distance_from_center_1 = obj->getDistanceFromCenter();
+      const ImVec2 position_1 = obj->getPosition();
+      float position_1_x = position_1.x;
+      float position_1_y = position_1.y;
 
-      ImVec2 position_2 = obj_2->getPosition();
-      ImVec2 distance_from_center_2 = obj_2->getDistanceFromCenter();
+      const ImVec2 distance_from_center_1 = obj->getDistanceFromCenter();
 
-      auto dst_x = position_1.x - position_2.x;
-      auto dst_y = position_1.y - position_2.y;
+      const ImVec2 position_2 = obj_2->getPosition();
+      float position_2_x = position_2.x;
+      float position_2_y = position_2.y;
 
-      ImVec2 p2_p1 = ImVec2(dst_x, dst_y);
+      const bool is_obj_1_righty = position_1_x < position_2_x;
+      const bool is_obj_1_under = position_1_y < position_2_y;
+
+      const ImVec2 distance_from_center_2 = obj_2->getDistanceFromCenter();
+
+      const auto dst_x = position_2_x - position_1_x;
+
+      const auto dst_y = position_2_y - position_1_y;
 
       const float dst2 = (dst_x * dst_x) + (dst_y * dst_y);
 
+      const float min_distance_x =
+          (distance_from_center_1.x - distance_from_center_2.x);
+
+      const float min_distance_y =
+          (distance_from_center_1.y - distance_from_center_2.y);
+
       const float min_distance =
-          (distance_from_center_1.x + distance_from_center_2.x) *
-          (distance_from_center_1.y + distance_from_center_2.y);
+          (min_distance_x * min_distance_x) + (min_distance_y * min_distance_y);
 
-      if (dst2 < min_distance) {
+      if (dst2 < min_distance * 0.5f && dst2 > eps) {
         const float dist = sqrt(dst2);
-        std::cout << "x: " << dst_x << " y: " << dst_y << " dst2 " << dst2
-                  << " min-dst " << min_distance << "dist " << dist
-                  << std::endl;
-        const float delta = response_coef * 0.5f * (min_distance - dist);
+        const float delta = response_coef * 0.5f * (sqrt(min_distance) - dist);
 
-        const auto collision_vec = ImVec2(p2_p1.x / dist, p2_p1.y / dist);
-        position_1.x = position_1.x + collision_vec.x;
-        position_2.x = position_2.x - collision_vec.x;
+        const auto collision_vec =
+            ImVec2((dst_x / dist) * delta, (dst_y / dist) * delta);
 
-        position_1.y = position_1.y + collision_vec.y;
-        position_2.y = position_2.y - collision_vec.y;
-        std::cout << "here\n";
+        const auto x_collision =
+            is_obj_1_righty ? collision_vec.x : collision_vec.x * -1.0f;
+        position_1_x -= x_collision;
+        position_2_x += x_collision;
+
+        const auto y_collision =
+            is_obj_1_under ? collision_vec.y : collision_vec.y * -1.0f;
+
+        position_1_y -= collision_vec.y;
+        position_2_y += collision_vec.y;
+
+        const auto new_position_1 = ImVec2(position_1_x, position_1_y);
+        obj->setPosition(new_position_1);
+
+        const auto new_position_2 = ImVec2(position_2_x, position_2_y);
+        obj_2->setPosition(new_position_2);
       }
-
-      // need to make sure new positions are not out ouf bound of the screen
-      SystemState::makeSureObjectInBound(&position_1, distance_from_center_1);
-      SystemState::makeSureObjectInBound(&position_2, distance_from_center_2);
-
-      obj->setPosition(position_1);
-      obj_2->setPosition(position_2);
     }
-  }
-}
-
-void SystemState::makeSureObjectInBound(ImVec2 *pos,
-                                        const ImVec2 &distance_from_center) {
-  ImVec2 window_size = ImGui::GetMainViewport()->Size;
-
-  if (pos->x + distance_from_center.x >= window_size.x) {
-    pos->x = window_size.x - distance_from_center.x;
-  }
-
-  if (pos->x - distance_from_center.x <= 0) {
-    pos->x = distance_from_center.x;
-  }
-
-  if (pos->y + distance_from_center.y >= window_size.y) {
-    pos->y = window_size.y - distance_from_center.y;
-  }
-
-  if (pos->y - distance_from_center.y <= 0) {
-    pos->y = distance_from_center.y;
   }
 }

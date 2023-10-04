@@ -16,9 +16,9 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  int count = 0;
+  SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
 
-  auto last = std::chrono::system_clock::now();
+  auto &io = ImGui::GetIO();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -27,16 +27,9 @@ int main() {
     auto statsModal = ViewStats();
     statsModal.render();
 
-    std::chrono::duration<double> elapsed_seconds =
-        std::chrono::system_clock::now() - last;
-    if (elapsed_seconds.count() > 1.5) {
-      SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
-      last = std::chrono::system_clock::now();
-    }
-
     SystemState::ResolveCollisions();
+    SystemState::Update(1.0f / io.Framerate);
     SystemState::Draw();
-    SystemState::Update();
 
     main_view.render();
   }
