@@ -38,14 +38,20 @@ void SystemState::Update() {
 
 void SystemState::ResolveCollisions() {
   for (int i = 0; i < SystemState::objects.size(); ++i) {
-    for (int j = i + 1; j < SystemState::objects.size(); ++j) {
+    for (int j = 0; j < SystemState::objects.size(); ++j) {
       PhysicsObject *obj = SystemState::objects[i];
       PhysicsObject *obj_2 = SystemState::objects[j];
 
+      if (obj == obj_2) {
+        continue;
+      }
+
       float distance = 0.0f;
+
       const bool has_collision = SystemState::CheckCircleCollision(
           reinterpret_cast<CircleObject *>(obj),
           reinterpret_cast<CircleObject *>(obj_2), distance);
+
       if (has_collision) {
         SystemState::ResolveCircleCollision(
             reinterpret_cast<CircleObject *>(obj),

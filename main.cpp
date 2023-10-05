@@ -28,8 +28,8 @@ int main() {
     SystemState::ResolveCollisions();
     // dont know how to make it fall faster
     SystemState::Update();
-    if (count < 1000) {
-      SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
+    if (count < 10) {
+      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 10.0f));
       ++count;
     }
     SystemState::Draw();
