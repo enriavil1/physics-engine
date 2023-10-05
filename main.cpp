@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
 
-#include "./physics/physicsObjects/circleObject.hpp"
-#include "./physics/systemState.hpp"
-#include "./views/ViewStats.cpp"
-#include "./views/main/MainView.hpp"
+#include "physics/physicsObjects/circleObject.hpp"
+#include "physics/systemState.hpp"
+#include "views/ViewStats.cpp"
+#include "views/main/MainView.hpp"
 
 int main() {
   // this is mac versioning add other versions

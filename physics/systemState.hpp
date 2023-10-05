@@ -3,14 +3,21 @@
 #include <chrono>
 #include <vector>
 
-#include "./physicsObjects/physicsObject.hpp"
+#include "physicsObjects/circleObject.hpp"
+#include "physicsObjects/physicsObject.hpp"
 
 typedef uint32_t uint;
 
 class SystemState {
 private:
-  static std::chrono::time_point<std::chrono::system_clock> last_update;
   static std::vector<PhysicsObject *> objects;
+
+  static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
+                                     float &distance);
+  static bool CheckCircleCollision(CircleObject *circle_1,
+                                   CircleObject *circle_2, float &distance);
+  static void ResolveCircleCollision(CircleObject *circle_1,
+                                     CircleObject *circle_2, float &distance);
 
 public:
   static uint GetObjectAmount();
