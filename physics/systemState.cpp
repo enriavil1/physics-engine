@@ -23,17 +23,20 @@ void SystemState::Draw() {
   }
 }
 
-void SystemState::Update(const float dt) {
+void SystemState::Update() {
   Gravity gravity;
+
+  auto &io = ImGui::GetIO();
+  const auto fps_cap = io.Framerate > 60 ? 60.0f : io.Framerate;
+
   for (PhysicsObject *obj : SystemState::objects) {
-    obj->update(dt);
+    obj->update(1.0f / fps_cap);
     obj->applyForce(gravity);
     obj->constraint(obj->getPosition());
   }
 }
 
 void SystemState::ResolveCollisions() {
-
   for (int i = 0; i < SystemState::objects.size(); ++i) {
     for (int j = i + 1; j < SystemState::objects.size(); ++j) {
       PhysicsObject *obj = SystemState::objects[i];

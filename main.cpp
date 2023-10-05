@@ -16,9 +16,6 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto start = std::chrono::system_clock::now();
-
-  auto &io = ImGui::GetIO();
   auto count = 0;
 
   while (main_view.getIsRunning()) {
@@ -28,20 +25,14 @@ int main() {
     auto statsModal = ViewStats();
     statsModal.render();
 
-    const auto fps_cap = io.Framerate > 60 ? 60.0f : io.Framerate;
-
     SystemState::ResolveCollisions();
     // dont know how to make it fall faster
-    SystemState::Update((1.0f / fps_cap) * 6);
-    SystemState::Draw();
-
-    auto current = std::chrono::system_clock::now();
-    std::chrono::duration<double> dt = current - start;
-    if (dt.count() > 2 && count < 3) {
+    SystemState::Update();
+    if (count < 1000) {
       SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
-      start = current;
       ++count;
     }
+    SystemState::Draw();
 
     main_view.render();
   }

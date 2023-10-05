@@ -24,7 +24,7 @@ public:
   static void AddObject(PhysicsObject *object);
 
   static void Draw();
-  static void Update(const float dt);
+  static void Update();
 
   static void ResolveCollisions();
 };
