@@ -16,16 +16,15 @@ void CircleObject::update(const double &dt) {
   // // we only need to multiple by pixels/meter to convert velocity
   auto new_acc = Gravity::apply(this->mass, this->velocity.y);
 
-  float new_position_x =
-      ((2.0f * this->position.x) - this->last_position.x +
-       (new_acc.x * (dt * dt)) * ForceConstants::PIXELS_PER_METER);
-  float new_position_y =
-      ((2.0f * this->position.y) - this->last_position.y +
-       (new_acc.y * (dt * dt)) * ForceConstants::PIXELS_PER_METER);
+  float new_position_x = ((2.0f * this->position.x) - this->last_position.x +
+                          (new_acc.x * (dt * dt)));
+  float new_position_y = ((2.0f * this->position.y) - this->last_position.y +
+                          (new_acc.y * (dt * dt)));
 
   this->last_position = this->position;
   this->position = ImVec2(new_position_x, new_position_y);
 
+  // divide by PIXELS_PER_METER to turn velocity into pixels/s
   float new_velocity_x = ((this->position.x - this->last_position.x) /
                           ForceConstants::PIXELS_PER_METER) /
                          dt;
