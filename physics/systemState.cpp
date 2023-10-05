@@ -34,12 +34,10 @@ void SystemState::Update(const float dt) {
 
 void SystemState::ResolveCollisions() {
 
-  for (PhysicsObject *obj : SystemState::objects) {
-    for (PhysicsObject *obj_2 : SystemState::objects) {
-      // dont want to check against itself (always collision)
-      if (obj == obj_2) {
-        continue;
-      }
+  for (int i = 0; i < SystemState::objects.size(); ++i) {
+    for (int j = i + 1; j < SystemState::objects.size(); ++j) {
+      PhysicsObject *obj = SystemState::objects[i];
+      PhysicsObject *obj_2 = SystemState::objects[j];
 
       float distance = 0.0f;
       const bool has_collision = SystemState::CheckCircleCollision(
