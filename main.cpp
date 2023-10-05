@@ -1,9 +1,10 @@
 #include <chrono>
 #include <iostream>
 
-#include "./physics/physicsObjects/circleObject.hpp"
-#include "./views/ViewStats.cpp"
-#include "./views/main/MainView.hpp"
+#include "physics/physicsObjects/circleObject.hpp"
+#include "physics/systemState.hpp"
+#include "views/ViewStats.cpp"
+#include "views/main/MainView.hpp"
 
 int main() {
   // this is mac versioning add other versions
@@ -15,9 +16,7 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto circle = CircleObject(1.0, (width * 1.0) / 2, 25, 25);
-
-  auto last_update = std::chrono::system_clock::now();
+  auto count = 0;
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -25,14 +24,15 @@ int main() {
     main_view.newFrame();
     auto statsModal = ViewStats();
     statsModal.render();
-    circle.draw();
 
-    std::chrono::duration<double> elapsed_seconds =
-        std::chrono::system_clock::now() - last_update;
-
-    if (elapsed_seconds.count() >= 1) {
-      circle.update(elapsed_seconds.count());
+    SystemState::ResolveCollisions();
+    // dont know how to make it fall faster
+    SystemState::Update();
+    if (count < 10) {
+      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 10.0f));
+      ++count;
     }
+    SystemState::Draw();
 
     main_view.render();
   }
