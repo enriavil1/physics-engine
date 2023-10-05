@@ -67,7 +67,7 @@ void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
 bool SystemState::CheckCircleCollision(CircleObject *circle_1,
                                        CircleObject *circle_2,
                                        float &distance) {
-  constexpr float eps = 0.0001f;
+  constexpr float eps = 0.001f;
 
   // x or y are both the same thing
   // since the radius is constant
@@ -79,7 +79,7 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
 
   SystemState::DistanceFromTwoObjects(circle_1, circle_2, distance);
 
-  return min_distance >= fabs(distance) - eps;
+  return min_distance >= fabs(distance) - eps && distance > eps;
 }
 
 void SystemState::ResolveCircleCollision(CircleObject *circle_1,
@@ -89,6 +89,8 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
   const float distance_from_center_2 = circle_2->getDistanceFromCenter().x;
 
   const float min_distance = distance_from_center_1 + distance_from_center_2;
+
+  // distance will be our vector normalizer
   distance = sqrtf(distance);
 
   // we calculate the overlap of the circle
@@ -97,15 +99,11 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
   const ImVec2 pos_1 = circle_1->getPosition();
   const ImVec2 pos_2 = circle_2->getPosition();
 
-  float new_pos_1_x =
-      pos_1.x - ((overlap_dist * (pos_1.x - pos_2.x)) / distance);
-  float new_pos_1_y =
-      pos_1.y - ((overlap_dist * (pos_1.y - pos_2.y)) / distance);
+  float new_pos_1_x = pos_1.x - (overlap_dist * (pos_1.x - pos_2.x) / distance);
+  float new_pos_1_y = pos_1.y - (overlap_dist * (pos_1.y - pos_2.y) / distance);
 
-  float new_pos_2_x =
-      pos_2.x + ((overlap_dist * (pos_1.x - pos_2.x)) / distance);
-  float new_pos_2_y =
-      pos_2.y + ((overlap_dist * (pos_1.y - pos_2.y)) / distance);
+  float new_pos_2_x = pos_2.x + (overlap_dist * (pos_1.x - pos_2.x) / distance);
+  float new_pos_2_y = pos_2.y + (overlap_dist * (pos_1.y - pos_2.y) / distance);
 
   circle_1->setPosition(ImVec2(new_pos_1_x, new_pos_1_y));
   circle_2->setPosition(ImVec2(new_pos_2_x, new_pos_2_y));

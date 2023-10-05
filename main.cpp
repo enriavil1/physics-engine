@@ -19,6 +19,7 @@ int main() {
   auto start = std::chrono::system_clock::now();
 
   auto &io = ImGui::GetIO();
+  auto count = 0;
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -36,9 +37,10 @@ int main() {
 
     auto current = std::chrono::system_clock::now();
     std::chrono::duration<double> dt = current - start;
-    if (dt.count() > 2) {
+    if (dt.count() > 2 && count < 3) {
       SystemState::AddObject(new CircleObject(1.0, 0, 0, 10));
       start = current;
+      ++count;
     }
 
     main_view.render();

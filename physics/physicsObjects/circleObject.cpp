@@ -3,12 +3,13 @@
 #include <iostream>
 
 ImVec2 CircleObject::getDistanceFromCenter() {
-  return ImVec2(this->radius, this->radius);
+  // radius + thickness of line
+  return ImVec2(this->radius + 1.0f, this->radius + 1.0f);
 }
 
 void CircleObject::draw() {
   ImGui::GetBackgroundDrawList()->AddCircle(this->position, this->radius,
-                                            ObjectColors::WHITE, 0, 1.0);
+                                            ObjectColors::WHITE, 0, 1.0f);
 }
 
 void CircleObject::update(const double &dt) {
