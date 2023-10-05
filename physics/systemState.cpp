@@ -30,8 +30,10 @@ void SystemState::Update() {
   const auto fps_cap = io.Framerate > 60 ? 60.0f : io.Framerate;
 
   for (PhysicsObject *obj : SystemState::objects) {
-    obj->update(1.0f / fps_cap);
+    // TODO(enriavil1): apply force is currently hard coded
     obj->applyForce(gravity);
+    // TODO(enriavil1): better gravity
+    obj->update(1.0f / fps_cap);
     obj->constraint(obj->getPosition());
   }
 }
