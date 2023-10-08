@@ -31,7 +31,7 @@ int main() {
 
     auto current = std::chrono::system_clock::now();
     std::chrono::duration<double> duration = current - start;
-    if (duration.count() > 1) {
+    if (duration.count() > 0.5) {
       SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
       start = current;
     }
