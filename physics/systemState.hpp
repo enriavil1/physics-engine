@@ -43,8 +43,6 @@ public:
       const ImVec2 obj_pos = obj->getPosition();
       const ImVec2 distance_from_center = obj->getDistanceFromCenter();
 
-      std::cout << "x: " << m_pos_x << " y: " << m_pos_y << std::endl;
-
       const float lower_x = obj_pos.x - distance_from_center.x;
       const float higher_x = obj_pos.x + distance_from_center.x;
 
@@ -60,7 +58,7 @@ public:
     }
   };
 
-  static void UpdatePickedObject(const ImGuiIO &io) {
+  static void UpdatePickedObject() {
     float m_pos_x;
     float m_pos_y;
 

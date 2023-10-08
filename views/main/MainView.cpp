@@ -83,6 +83,12 @@ void MainView::processEvent() {
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
       if (this->event.button.button == SDL_BUTTON_LEFT) {
         SystemState::SetPickedObject();
+      } else if (this->event.button.button == SDL_BUTTON_RIGHT) {
+        float m_pos_x;
+        float m_pos_y;
+
+        SDL_GetMouseState(&m_pos_x, &m_pos_y);
+        SystemState::AddObject(new CircleObject(1.0f, m_pos_x, m_pos_y, 10.0f));
       }
       break;
     case SDL_EVENT_MOUSE_MOTION:
