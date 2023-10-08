@@ -1,5 +1,10 @@
 # physics-engine
 
+## Set Up
+
+1. git clone https://github.com/enriavil1/physics-engine.github
+2. git submodule update --init --recursive
+
 ## Requirements
 
 CMake (Version > 3.10)
