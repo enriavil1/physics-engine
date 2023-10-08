@@ -18,7 +18,7 @@ public:
     this->last_position = ImVec2(x, y);
   }
 
-  ImVec2 getDistanceFromCenter();
+  ImVec2 getDistanceFromCenter() const;
   void draw();
 
   void update(const double &dt);

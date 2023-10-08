@@ -78,11 +78,35 @@ void MainView::setUpImGui() {
 void MainView::processEvent() {
   while (SDL_PollEvent(&this->event)) {
     ImGui_ImplSDL3_ProcessEvent(&this->event);
-    if (event.type == SDL_EVENT_QUIT)
+    switch (this->event.type) {
+    // dealing with mouse events
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
+      if (this->event.button.button == SDL_BUTTON_LEFT) {
+        SystemState::SetPickedObject();
+      } else if (this->event.button.button == SDL_BUTTON_RIGHT) {
+        float m_pos_x;
+        float m_pos_y;
+
+        SDL_GetMouseState(&m_pos_x, &m_pos_y);
+        SystemState::AddObject(new CircleObject(1.0f, m_pos_x, m_pos_y, 10.0f));
+      }
+      break;
+    case SDL_EVENT_MOUSE_MOTION:
+      SystemState::UpdatePickedObject();
+      break;
+    case SDL_EVENT_MOUSE_BUTTON_UP:
+      SystemState::UnsetPickedObject();
+      break;
+
+    // quitting window
+    case SDL_EVENT_QUIT:
       this->is_running = false;
-    if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED &&
-        event.window.windowID == SDL_GetWindowID(this->window))
-      this->is_running = false;
+    case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+      if (event.window.windowID == SDL_GetWindowID(this->window)) {
+        this->is_running = false;
+      }
+      break;
+    }
   }
 }
 

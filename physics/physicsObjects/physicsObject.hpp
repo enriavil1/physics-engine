@@ -26,8 +26,8 @@ public:
     this->last_position = this->position;
     this->position = new_pos;
   }
-  ImVec2 getPosition() { return position; }
-  virtual ImVec2 getDistanceFromCenter() = 0;
+  ImVec2 getPosition() const { return position; }
+  virtual ImVec2 getDistanceFromCenter() const = 0;
 
   void applyForce(Force force) { this->forces.push_back(force); }
 
