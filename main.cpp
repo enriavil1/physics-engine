@@ -16,7 +16,7 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto count = 0;
+  auto start = std::chrono::system_clock::now();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -28,9 +28,12 @@ int main() {
     SystemState::ResolveCollisions();
     // dont know how to make it fall faster
     SystemState::Update();
-    if (count < 10) {
-      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 10.0f));
-      ++count;
+
+    auto current = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration = current - start;
+    if (duration.count() > 0.5) {
+      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
+      start = current;
     }
     SystemState::Draw();
 
