@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-ImVec2 CircleObject::getDistanceFromCenter() {
+ImVec2 CircleObject::getDistanceFromCenter() const {
   // radius + thickness of line
-  return ImVec2(this->radius + 1.0f, this->radius + 1.0f);
+  return ImVec2(this->radius, this->radius);
 }
 
 void CircleObject::draw() {

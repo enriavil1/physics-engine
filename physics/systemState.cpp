@@ -4,9 +4,10 @@
 
 #include "../forces/gravity.hpp"
 
-#include <iostream>
 #include <valarray>
 #include <vector>
+
+PhysicsObject *SystemState::m_picked_object = nullptr;
 
 std::vector<PhysicsObject *> SystemState::objects =
     std::vector<PhysicsObject *>{};
