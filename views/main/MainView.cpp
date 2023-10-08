@@ -86,7 +86,7 @@ void MainView::processEvent() {
       }
       break;
     case SDL_EVENT_MOUSE_MOTION:
-      SystemState::UpdatePickedObject(this->io);
+      SystemState::UpdatePickedObject();
       break;
     case SDL_EVENT_MOUSE_BUTTON_UP:
       SystemState::UnsetPickedObject();
