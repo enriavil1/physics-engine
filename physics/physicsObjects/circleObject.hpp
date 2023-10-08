@@ -3,8 +3,6 @@
 #include "../../forces/gravity.hpp"
 #include "./physicsObject.hpp"
 
-#include <chrono>
-
 class CircleObject : public PhysicsObject {
 private:
   float radius = 0.0;
