@@ -1,9 +1,10 @@
 #include <chrono>
 #include <iostream>
 
+#include "imgui/imgui.h"
 #include "physics/physicsObjects/circleObject.hpp"
 #include "physics/systemState.hpp"
-#include "views/ViewStats.cpp"
+#include "views/ViewStats.hpp"
 #include "views/main/MainView.hpp"
 
 int main() {
@@ -31,10 +32,11 @@ int main() {
 
     auto current = std::chrono::system_clock::now();
     std::chrono::duration<double> duration = current - start;
-    if (duration.count() > 0.5) {
-      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
-      start = current;
-    }
+    ImGui::ShowDemoWindow();
+    // if (duration.count() > 0.5) {
+    //   SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
+    //   start = current;
+    // }
     SystemState::Draw();
 
     main_view.render();
