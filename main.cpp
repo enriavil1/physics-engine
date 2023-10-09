@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 #include "physics/physicsObjects/circleObject.hpp"
 #include "physics/systemState.hpp"
+#include "views/ViewObjectsConfig.hpp"
 #include "views/ViewStats.hpp"
 #include "views/main/MainView.hpp"
 
@@ -18,13 +19,18 @@ int main() {
   main_view.createWindow();
 
   auto start = std::chrono::system_clock::now();
+  auto statsModal = ViewStats();
+  auto objectConfigModal = ViewObjectsConfig();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
     // Start the Dear ImGui frame
     main_view.newFrame();
-    auto statsModal = ViewStats();
+
+    ImGui::NewFrame();
+
     statsModal.render();
+    objectConfigModal.render();
 
     SystemState::ResolveCollisions();
     // dont know how to make it fall faster
@@ -38,7 +44,6 @@ int main() {
     //   start = current;
     // }
     SystemState::Draw();
-
     main_view.render();
   }
 

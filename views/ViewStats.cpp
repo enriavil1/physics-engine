@@ -12,7 +12,6 @@ void ViewStats::render() {
 
   auto view_port_width = ImGui::GetMainViewport()->Size.x;
 
-  ImGui::NewFrame();
   ImGui::SetNextWindowPos(ImVec2(view_port_width - 100, 10));
   ImGui::SetNextWindowSize(ImVec2(100, 100));
 

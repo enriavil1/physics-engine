@@ -62,6 +62,10 @@ void MainView::setUpImGui() {
   ImGuiIO &io = ImGui::GetIO();
   (void)io;
 
+  auto &style = ImGui::GetStyle();
+  style.WindowRounding = 5;
+  style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
 #if defined(LIGHT_MODE)
   ImGui::StyleColorsLight();
 #else
