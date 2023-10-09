@@ -31,7 +31,7 @@ void ViewObjectsConfig::addDisclaimer() {
   ImGui::SameLine();
   HelpMarker("Click and drag to edit value.\n"
              "Hold SHIFT/ALT for faster/slower edit.\n"
-             "Double-click or CMD/CTRL+click to input value.");
+             "Double-click or CTRL+click to input value.");
 }
 
 void ViewObjectsConfig::loadCircleConfigs() {

@@ -18,5 +18,6 @@ private:
   void HelpMarker(const char *desc);
 
 public:
+  static float GetRadius() { return ViewObjectsConfig::radius; }
   void render();
 };
