@@ -1,5 +1,8 @@
 #include "./MainView.hpp"
-#include "../ViewStats.cpp"
+#include "../ViewObjectsConfig.hpp"
+#include "../ViewStats.hpp"
+#include "../physics/SystemState.hpp"
+#include "../physics/physicsObjects/circleObject.hpp"
 
 #include <iostream>
 
@@ -62,6 +65,10 @@ void MainView::setUpImGui() {
   ImGuiIO &io = ImGui::GetIO();
   (void)io;
 
+  auto &style = ImGui::GetStyle();
+  style.WindowRounding = 5;
+  style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
 #if defined(LIGHT_MODE)
   ImGui::StyleColorsLight();
 #else
@@ -88,7 +95,9 @@ void MainView::processEvent() {
         float m_pos_y;
 
         SDL_GetMouseState(&m_pos_x, &m_pos_y);
-        SystemState::AddObject(new CircleObject(1.0f, m_pos_x, m_pos_y, 10.0f));
+        const float radius = ViewObjectsConfig::GetRadius();
+        SystemState::AddObject(
+            new CircleObject(1.0f, m_pos_x, m_pos_y, radius));
       }
       break;
     case SDL_EVENT_MOUSE_MOTION:

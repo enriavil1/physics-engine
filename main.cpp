@@ -1,9 +1,11 @@
 #include <chrono>
 #include <iostream>
 
+#include "imgui/imgui.h"
 #include "physics/physicsObjects/circleObject.hpp"
 #include "physics/systemState.hpp"
-#include "views/ViewStats.cpp"
+#include "views/ViewObjectsConfig.hpp"
+#include "views/ViewStats.hpp"
 #include "views/main/MainView.hpp"
 
 int main() {
@@ -16,27 +18,32 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto start = std::chrono::system_clock::now();
+  // auto start = std::chrono::system_clock::now();
+
+  auto statsModal = ViewStats();
+  auto objectConfigModal = ViewObjectsConfig();
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
     // Start the Dear ImGui frame
     main_view.newFrame();
-    auto statsModal = ViewStats();
+
+    ImGui::NewFrame();
+
     statsModal.render();
+    objectConfigModal.render();
 
     SystemState::ResolveCollisions();
     // dont know how to make it fall faster
     SystemState::Update();
 
-    auto current = std::chrono::system_clock::now();
-    std::chrono::duration<double> duration = current - start;
-    if (duration.count() > 0.5) {
-      SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
-      start = current;
-    }
+    // auto current = std::chrono::system_clock::now();
+    // std::chrono::duration<double> duration = current - start;
+    // if (duration.count() > 0.5) {
+    //   SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
+    //   start = current;
+    // }
     SystemState::Draw();
-
     main_view.render();
   }
 
