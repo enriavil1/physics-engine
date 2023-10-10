@@ -1,5 +1,6 @@
+#include <algorithm>
 #include <chrono>
-#include <iostream>
+#include <system_error>
 
 #include "imgui/imgui.h"
 #include "physics/physicsObjects/circleObject.hpp"
@@ -23,6 +24,12 @@ int main() {
   auto statsModal = ViewStats();
   auto objectConfigModal = ViewObjectsConfig();
 
+  auto &io = ImGui::GetIO();
+
+  const float dt = 1.0f / io.Framerate;
+
+  auto start = std::chrono::system_clock::now();
+
   while (main_view.getIsRunning()) {
     main_view.processEvent();
     // Start the Dear ImGui frame
@@ -33,9 +40,19 @@ int main() {
     statsModal.render();
     objectConfigModal.render();
 
-    SystemState::ResolveCollisions();
-    // dont know how to make it fall faster
-    SystemState::Update();
+    const auto current = std::chrono::system_clock::now();
+    const std::chrono::duration<double> duration = current - start;
+
+    start = current;
+    float frame_time = duration.count();
+
+    while (frame_time > 0.0f) {
+      const float time_step = std::min(frame_time, dt);
+      SystemState::ResolveCollisions();
+      SystemState::Update(time_step);
+
+      frame_time -= dt;
+    }
 
     // auto current = std::chrono::system_clock::now();
     // std::chrono::duration<double> duration = current - start;
@@ -43,6 +60,7 @@ int main() {
     //   SystemState::AddObject(new CircleObject(1.0f, 0, 0, 5.0f));
     //   start = current;
     // }
+
     SystemState::Draw();
     main_view.render();
   }

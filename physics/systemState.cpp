@@ -3,8 +3,8 @@
 #include "physicsObjects/physicsObject.hpp"
 
 #include "../forces/gravity.hpp"
+#include "iostream"
 
-#include <valarray>
 #include <vector>
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
@@ -24,17 +24,15 @@ void SystemState::Draw() {
   }
 }
 
-void SystemState::Update() {
+void SystemState::Update(float dt) {
   Gravity gravity;
 
-  auto &io = ImGui::GetIO();
-  const auto fps_cap = io.Framerate > 60 ? 60.0f : io.Framerate;
-
   for (PhysicsObject *obj : SystemState::objects) {
-    // TODO(enriavil1): apply force is currently hard coded
-    obj->applyForce(gravity);
-    // TODO(enriavil1): better gravity
-    obj->update(1.0f / fps_cap);
+    // we dont apply gravity onto the object we pick up
+    if (obj != SystemState::m_picked_object) {
+      obj->applyForce(&gravity);
+    }
+    obj->update(dt);
     obj->constraint(obj->getPosition());
   }
 }

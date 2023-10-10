@@ -3,10 +3,11 @@
 #include "../imgui/imgui.h"
 
 namespace ForceConstants {
-const unsigned int PIXELS_PER_METER = 40;
+const uint32_t PIXELS_PER_METER = 500;
+const float EPSILON = 0.0001f;
 } // namespace ForceConstants
 
 class Force {
 public:
-  static ImVec2 apply(float mass, float current_velocity);
+  virtual ImVec2 apply(float mass, float current_velocity) = 0;
 };

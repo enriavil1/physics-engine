@@ -1,7 +1,5 @@
 #pragma once
 
-#include "iostream"
-#include <chrono>
 #include <vector>
 
 #include <SDL3/SDL.h>
@@ -29,7 +27,7 @@ public:
   static void AddObject(PhysicsObject *object);
 
   static void Draw();
-  static void Update();
+  static void Update(float dt);
 
   static void ResolveCollisions();
 

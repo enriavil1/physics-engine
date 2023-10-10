@@ -1,8 +1,8 @@
 #include "./MainView.hpp"
 #include "../ViewObjectsConfig.hpp"
 #include "../ViewStats.hpp"
-#include "../physics/SystemState.hpp"
 #include "../physics/physicsObjects/circleObject.hpp"
+#include "../physics/systemState.hpp"
 
 #include <iostream>
 

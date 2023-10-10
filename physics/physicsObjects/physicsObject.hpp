@@ -14,7 +14,7 @@ class PhysicsObject {
 protected:
   float mass;
 
-  std::vector<Force> forces = std::vector<Force>{};
+  std::vector<Force *> forces = std::vector<Force *>{};
 
   ImVec2 position;
   ImVec2 last_position;
@@ -29,7 +29,7 @@ public:
   ImVec2 getPosition() const { return position; }
   virtual ImVec2 getDistanceFromCenter() const = 0;
 
-  void applyForce(Force force) { this->forces.push_back(force); }
+  void applyForce(Force *force) { this->forces.push_back(force); }
 
   virtual void draw() = 0;
   virtual void update(const double &dt /* change in time*/) = 0;
