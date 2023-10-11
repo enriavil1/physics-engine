@@ -1,6 +1,7 @@
-#include "./circleObject.hpp"
+#define BOUNCE_PERCENTAGE -0.80f
+#define MIN_BOUNCE 0.1f
 
-#include <iostream>
+#include "./circleObject.hpp"
 
 ImVec2 CircleObject::getDistanceFromCenter() const {
   // radius + thickness of line
@@ -35,8 +36,8 @@ void CircleObject::update(const double &dt) {
 
   this->position = ImVec2(new_position_x, new_position_y);
 
-  float new_velocity_x = this->acceleration.x * dt;
-  float new_velocity_y = this->acceleration.y * dt;
+  float new_velocity_x = this->velocity.x + this->acceleration.x * dt;
+  float new_velocity_y = this->velocity.y + this->acceleration.y * dt;
 
   this->velocity = ImVec2(new_velocity_x, new_velocity_y);
   this->acceleration = ImVec2(0, 0);
@@ -50,16 +51,43 @@ void CircleObject::constraint(const ImVec2 &position) {
 
   // the radius is the distance from the center of the circle to the edge
   // new_position is only considering the center of the circle
-  if (new_position_x + this->radius >= window_size.x) {
-    new_position_x = window_size.x - this->radius;
-  } else if (new_position_x - this->radius <= 0) {
-    new_position_x = this->radius;
+  if (new_position_x + this->radius >= window_size.x ||
+      new_position_x - this->radius <= 0) {
+
+    if (new_position_x + this->radius >= window_size.x) {
+      new_position_x = window_size.x - this->radius;
+    }
+
+    if (new_position_x - this->radius <= 0) {
+      new_position_x = this->radius;
+    }
+
+    auto new_x_vel = fabs(this->velocity.x * BOUNCE_PERCENTAGE) > MIN_BOUNCE
+                         ? this->velocity.x * BOUNCE_PERCENTAGE
+                         : 0.0f;
+    this->velocity = ImVec2(new_x_vel, this->velocity.y);
   }
 
-  if (new_position_y + this->radius >= window_size.y) {
-    new_position_y = window_size.y - this->radius;
-  } else if (new_position_y - this->radius <= 0) {
-    new_position_y = this->radius;
+  if (new_position_y + this->radius >= window_size.y ||
+      new_position_y - this->radius <= 0) {
+
+    if (new_position_y + this->radius >= window_size.y) {
+      new_position_y = window_size.y - this->radius;
+
+      // we add the normal (inverse of gravity)
+      Gravity g;
+      auto acc = g.apply(this->mass, this->velocity.y);
+      this->acceleration = ImVec2(this->acceleration.x, acc.y * -1);
+    }
+
+    if (new_position_y - this->radius <= 0) {
+      new_position_y = this->radius;
+    }
+
+    auto new_y_vel = fabs(this->velocity.y * BOUNCE_PERCENTAGE) > MIN_BOUNCE
+                         ? this->velocity.y * BOUNCE_PERCENTAGE
+                         : 0.0f;
+    this->velocity = ImVec2(this->velocity.x, new_y_vel);
   }
 
   this->setPosition(ImVec2(new_position_x, new_position_y));
