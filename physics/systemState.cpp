@@ -147,6 +147,9 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
   const float new_vel_2_y =
       circle_2_vec.y + impulse_y * circle_2->getMass() * y_vector;
 
-  circle_1->setVelocity(ImVec2(new_vel_1_x, new_vel_1_y));
-  circle_2->setVelocity(ImVec2(new_vel_2_x, new_vel_2_y));
+  if (SystemState::m_picked_object != circle_1 &&
+      SystemState::m_picked_object) {
+    circle_1->setVelocity(ImVec2(new_vel_1_x, new_vel_1_y));
+    circle_2->setVelocity(ImVec2(new_vel_2_x, new_vel_2_y));
+  }
 }
