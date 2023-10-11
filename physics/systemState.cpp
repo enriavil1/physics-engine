@@ -87,7 +87,9 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
   const float min_distance =
       pow(distance_from_center_1 + distance_from_center_2, 2);
 
-  SystemState::DistanceFromTwoObjects(circle_1, circle_2, distance);
+  SystemState::DistanceFromTwoObjects(
+      reinterpret_cast<PhysicsObject *>(circle_1),
+      reinterpret_cast<PhysicsObject *>(circle_2), distance);
 
   return min_distance >= fabs(distance) - eps && distance > eps;
 }
@@ -109,12 +111,42 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
   const ImVec2 pos_1 = circle_1->getPosition();
   const ImVec2 pos_2 = circle_2->getPosition();
 
-  float new_pos_1_x = pos_1.x - (overlap_dist * (pos_1.x - pos_2.x) / distance);
-  float new_pos_1_y = pos_1.y - (overlap_dist * (pos_1.y - pos_2.y) / distance);
+  const float x_vector = (overlap_dist * (pos_1.x - pos_2.x) / distance);
+  const float y_vector = (overlap_dist * (pos_1.y - pos_2.y) / distance);
 
-  float new_pos_2_x = pos_2.x + (overlap_dist * (pos_1.x - pos_2.x) / distance);
-  float new_pos_2_y = pos_2.y + (overlap_dist * (pos_1.y - pos_2.y) / distance);
+  float new_pos_1_x = pos_1.x - x_vector;
+  float new_pos_1_y = pos_1.y - y_vector;
+
+  float new_pos_2_x = pos_2.x + x_vector;
+  float new_pos_2_y = pos_2.y + y_vector;
 
   circle_1->setPosition(ImVec2(new_pos_1_x, new_pos_1_y));
   circle_2->setPosition(ImVec2(new_pos_2_x, new_pos_2_y));
+
+  // resolve velocity
+  const ImVec2 circle_1_vec = circle_1->getVelocity();
+  const ImVec2 circle_2_vec = circle_2->getVelocity();
+
+  const float impulse_x =
+      2 * (circle_1_vec.x * x_vector - circle_2_vec.x * x_vector) /
+          circle_1->getMass() +
+      circle_2->getMass();
+
+  const float impulse_y =
+      2 * (circle_1_vec.y * y_vector - circle_2_vec.y * y_vector) /
+          circle_1->getMass() +
+      circle_2->getMass();
+
+  const float new_vel_1_x =
+      circle_1_vec.x - impulse_x * circle_1->getMass() * x_vector;
+  const float new_vel_1_y =
+      circle_1_vec.y - impulse_y * circle_1->getMass() * y_vector;
+
+  const float new_vel_2_x =
+      circle_2_vec.x + impulse_x * circle_2->getMass() * x_vector;
+  const float new_vel_2_y =
+      circle_2_vec.y + impulse_y * circle_2->getMass() * y_vector;
+
+  circle_1->setVelocity(ImVec2(new_vel_1_x, new_vel_1_y));
+  circle_2->setVelocity(ImVec2(new_vel_2_x, new_vel_2_y));
 }

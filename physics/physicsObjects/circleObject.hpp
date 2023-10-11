@@ -13,7 +13,6 @@ public:
     this->radius = radius;
 
     this->position = ImVec2(x, y);
-    this->last_position = ImVec2(x, y);
   }
 
   ImVec2 getDistanceFromCenter() const;
