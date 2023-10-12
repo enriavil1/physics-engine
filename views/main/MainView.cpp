@@ -91,13 +91,13 @@ void MainView::processEvent() {
       if (this->event.button.button == SDL_BUTTON_LEFT) {
         SystemState::SetPickedObject();
       } else if (this->event.button.button == SDL_BUTTON_RIGHT) {
-        float m_pos_x;
-        float m_pos_y;
+        float mouse_pos_x;
+        float mouse_pos_y;
 
-        SDL_GetMouseState(&m_pos_x, &m_pos_y);
-        const float radius = ViewObjectsConfig::GetRadius();
-        SystemState::AddObject(
-            new CircleObject(1.0f, m_pos_x, m_pos_y, radius));
+        SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
+        SystemState::AddObject(new CircleObject(
+            ViewObjectsConfig::GetMass(), mouse_pos_x, mouse_pos_y,
+            ViewObjectsConfig::GetRadius(), ViewObjectsConfig::GetColor()));
       }
       break;
     case SDL_EVENT_MOUSE_MOTION:
@@ -130,6 +130,9 @@ void MainView::render() {
   glViewport(0, 0, static_cast<int>(this->io.DisplaySize.x),
              static_cast<int>(this->io.DisplaySize.y));
   glClear(GL_COLOR_BUFFER_BIT);
+  glClearColor(this->clear_color.x * this->clear_color.w,
+               this->clear_color.y * this->clear_color.w,
+               this->clear_color.z * this->clear_color.w, this->clear_color.w);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   SDL_GL_SwapWindow(this->window);
 }
