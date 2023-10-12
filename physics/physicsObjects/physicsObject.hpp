@@ -20,6 +20,8 @@ protected:
   ImVec2 velocity = ImVec2(0.0f, 0.0f);
   ImVec2 acceleration = ImVec2(0.0f, 0.0f);
 
+  ImU32 color = ObjectColors::WHITE;
+
 public:
   void setPosition(ImVec2 new_pos) { this->position = new_pos; }
   ImVec2 getPosition() const { return position; }

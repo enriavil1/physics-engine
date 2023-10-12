@@ -9,8 +9,8 @@ ImVec2 CircleObject::getDistanceFromCenter() const {
 }
 
 void CircleObject::draw() {
-  ImGui::GetBackgroundDrawList()->AddCircle(this->position, this->radius,
-                                            ObjectColors::WHITE, 0, 1.0f);
+  ImGui::GetBackgroundDrawList()->AddCircleFilled(this->position, this->radius,
+                                                  this->color, 0);
 }
 
 void CircleObject::update(const double &dt) {
