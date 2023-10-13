@@ -134,7 +134,6 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
     const ImVec2 circle_2_vec = circle_2->getVelocity();
 
     // dot product normal
-
     float dp_num_1 = circle_1_vec.x * x_vector + circle_1_vec.y * y_vector;
     float dp_num_2 = circle_2_vec.x * x_vector + circle_2_vec.y * y_vector;
 
