@@ -133,21 +133,28 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
     const ImVec2 circle_1_vec = circle_1->getVelocity();
     const ImVec2 circle_2_vec = circle_2->getVelocity();
 
-    const float impulse =
-        2 *
-        (circle_1_vec.x * x_vector + circle_1_vec.y * y_vector -
-         circle_2_vec.x * x_vector - circle_2_vec.y * y_vector) /
-        (circle_1->getMass() + circle_2->getMass());
+    // dot product normal
+
+    float dp_num_1 = circle_1_vec.x * x_vector + circle_1_vec.y * y_vector;
+    float dp_num_2 = circle_2_vec.x * x_vector + circle_2_vec.y * y_vector;
 
     const float new_vel_1_x =
-        circle_1_vec.x - impulse * circle_1->getMass() * x_vector;
+        (circle_1_vec.x * (circle_1->getMass() - circle_2->getMass()) +
+         (2 * circle_2->getMass() * circle_2_vec.x)) /
+        (circle_1->getMass() + circle_2->getMass());
     const float new_vel_1_y =
-        circle_1_vec.y - impulse * circle_1->getMass() * y_vector;
+        (circle_1_vec.y * (circle_1->getMass() - circle_2->getMass()) +
+         (2 * circle_2->getMass() * circle_2_vec.y)) /
+        (circle_1->getMass() + circle_2->getMass());
 
     const float new_vel_2_x =
-        circle_2_vec.x + impulse * circle_2->getMass() * x_vector;
+        (circle_2_vec.x * (circle_2->getMass() - circle_1->getMass()) +
+         (2 * circle_1->getMass() * circle_1_vec.x)) /
+        (circle_1->getMass() + circle_2->getMass());
     const float new_vel_2_y =
-        circle_2_vec.y + impulse * circle_2->getMass() * y_vector;
+        (circle_2_vec.y * (circle_2->getMass() - circle_1->getMass()) +
+         (2 * circle_1->getMass() * circle_1_vec.y)) /
+        (circle_1->getMass() + circle_2->getMass());
 
     circle_1->setVelocity(ImVec2(new_vel_1_x, new_vel_1_y));
     circle_2->setVelocity(ImVec2(new_vel_2_x, new_vel_2_y));
