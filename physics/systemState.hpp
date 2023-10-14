@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 
 #include <SDL3/SDL.h>
@@ -31,12 +32,8 @@ public:
 
   static void ResolveCollisions();
 
-  static void SetPickedObject() {
-    float m_pos_x;
-    float m_pos_y;
-
-    SDL_GetMouseState(&m_pos_x, &m_pos_y);
-
+  static void SetPickedObject(const float &mouse_pos_x,
+                              const float &mouse_pos_y) {
     for (PhysicsObject *obj : SystemState::objects) {
       const ImVec2 obj_pos = obj->getPosition();
       const ImVec2 distance_from_center = obj->getDistanceFromCenter();
@@ -48,22 +45,19 @@ public:
       const float higher_y = obj_pos.y + distance_from_center.y;
 
       // find the object that the mouse is inside of
-      if ((lower_x <= m_pos_x && m_pos_x <= higher_x) &&
-          (lower_y <= m_pos_y && m_pos_y <= higher_y)) {
+      if ((lower_x <= mouse_pos_x && mouse_pos_x <= higher_x) &&
+          (lower_y <= mouse_pos_y && mouse_pos_y <= higher_y)) {
         SystemState::m_picked_object = obj;
         break;
       }
     }
   };
 
-  static void UpdatePickedObject() {
-    float m_pos_x;
-    float m_pos_y;
-
-    SDL_GetMouseState(&m_pos_x, &m_pos_y);
-
+  static void UpdatePickedObject(const float &mouse_pos_x,
+                                 const float &mouse_pos_y) {
     if (SystemState::m_picked_object != nullptr) {
-      SystemState::m_picked_object->setPosition(ImVec2(m_pos_x, m_pos_y));
+      SystemState::m_picked_object->setPosition(
+          ImVec2(mouse_pos_x, mouse_pos_y));
     }
   }
 
