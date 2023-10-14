@@ -133,27 +133,32 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
     const ImVec2 circle_1_vec = circle_1->getVelocity();
     const ImVec2 circle_2_vec = circle_2->getVelocity();
 
+    const float tangent_x = -1.0f * y_vector;
+    const float tangent_y = x_vector;
+
+    const float dp_tan_1 =
+        circle_1_vec.x * tangent_x + circle_1_vec.y * tangent_y;
+    const float dp_tan_2 =
+        circle_2_vec.x * tangent_x + circle_2_vec.y * tangent_y;
+
     // dot product normal
-    float dp_num_1 = circle_1_vec.x * x_vector + circle_1_vec.y * y_vector;
-    float dp_num_2 = circle_2_vec.x * x_vector + circle_2_vec.y * y_vector;
+    const float dp_num_1 =
+        circle_1_vec.x * x_vector + circle_1_vec.y * y_vector;
+    const float dp_num_2 =
+        circle_2_vec.x * x_vector + circle_2_vec.y * y_vector;
 
-    const float new_vel_1_x =
-        (circle_1_vec.x * (circle_1->getMass() - circle_2->getMass()) +
-         (2 * circle_2->getMass() * circle_2_vec.x)) /
-        (circle_1->getMass() + circle_2->getMass());
-    const float new_vel_1_y =
-        (circle_1_vec.y * (circle_1->getMass() - circle_2->getMass()) +
-         (2 * circle_2->getMass() * circle_2_vec.y)) /
-        (circle_1->getMass() + circle_2->getMass());
+    const float m1 = (dp_num_1 * (circle_1->getMass() - circle_2->getMass()) +
+                      (2.0f * circle_2->getMass() * dp_num_2)) /
+                     (circle_1->getMass() + circle_2->getMass());
+    const float m2 = (dp_num_2 * (circle_2->getMass() - circle_1->getMass()) +
+                      (2.0f * circle_1->getMass() * dp_num_1)) /
+                     (circle_1->getMass() + circle_2->getMass());
 
-    const float new_vel_2_x =
-        (circle_2_vec.x * (circle_2->getMass() - circle_1->getMass()) +
-         (2 * circle_1->getMass() * circle_1_vec.x)) /
-        (circle_1->getMass() + circle_2->getMass());
-    const float new_vel_2_y =
-        (circle_2_vec.y * (circle_2->getMass() - circle_1->getMass()) +
-         (2 * circle_1->getMass() * circle_1_vec.y)) /
-        (circle_1->getMass() + circle_2->getMass());
+    const float new_vel_1_x = tangent_x * dp_tan_1 + x_vector * m1;
+    const float new_vel_1_y = tangent_y * dp_tan_1 + y_vector * m1;
+
+    const float new_vel_2_x = tangent_x * dp_tan_2 + x_vector * m2;
+    const float new_vel_2_y = tangent_y * dp_tan_2 + y_vector * m2;
 
     circle_1->setVelocity(ImVec2(new_vel_1_x, new_vel_1_y));
     circle_2->setVelocity(ImVec2(new_vel_2_x, new_vel_2_y));
