@@ -5,8 +5,10 @@
 #include "imgui/imgui.h"
 #include "physics/physicsObjects/circleObject.hpp"
 #include "physics/systemState.hpp"
+
 #include "views/ViewObjectsConfig.hpp"
 #include "views/ViewStats.hpp"
+#include "views/drawView/draw_view.hpp"
 #include "views/main/MainView.hpp"
 
 int main() {
@@ -19,8 +21,9 @@ int main() {
   auto main_view = MainView(glsl_version, clear_color, width, height);
   main_view.createWindow();
 
-  auto statsModal = ViewStats();
-  auto objectConfigModal = ViewObjectsConfig();
+  auto stats_modal = ViewStats();
+  auto object_config_modal = ViewObjectsConfig();
+  auto draw_view = DrawView();
 
   auto &io = ImGui::GetIO();
 
@@ -33,10 +36,8 @@ int main() {
     // Start the Dear ImGui frame
     main_view.newFrame();
 
-    ImGui::NewFrame();
-
-    statsModal.render();
-    objectConfigModal.render();
+    stats_modal.render();
+    object_config_modal.render();
 
     const auto current = std::chrono::system_clock::now();
     const std::chrono::duration<double> duration = current - start;
@@ -47,12 +48,10 @@ int main() {
     while (frame_time > 0.0f) {
       const float time_step = std::min(frame_time, dt);
       SystemState::ResolveCollisions();
-      SystemState::Update(time_step);
-
+      draw_view.render(time_step);
       frame_time -= dt;
     }
 
-    SystemState::Draw();
     main_view.render();
   }
 

@@ -1,3 +1,4 @@
+#include <iostream>
 #define BOUNCE_PERCENTAGE -0.80f
 #define MIN_BOUNCE 0.1f
 
@@ -9,8 +10,8 @@ ImVec2 CircleObject::getDistanceFromCenter() const {
 }
 
 void CircleObject::draw() {
-  ImGui::GetBackgroundDrawList()->AddCircleFilled(this->position, this->radius,
-                                                  this->color, 0);
+  auto draw_list = ImGui::GetWindowDrawList();
+  draw_list->AddCircleFilled(this->position, this->radius, this->color, 0);
 }
 
 void CircleObject::update(const double &dt) {
@@ -44,7 +45,8 @@ void CircleObject::update(const double &dt) {
 }
 
 void CircleObject::constraint(const ImVec2 &position) {
-  ImVec2 window_size = ImGui::GetMainViewport()->Size;
+  ImVec2 window_size = ImGui::GetWindowViewport()->WorkSize;
+  ImVec2 window_pos = ImGui::GetWindowPos();
 
   float new_position_x = position.x;
   float new_position_y = position.y;
@@ -52,14 +54,14 @@ void CircleObject::constraint(const ImVec2 &position) {
   // the radius is the distance from the center of the circle to the edge
   // new_position is only considering the center of the circle
   if (new_position_x + this->radius >= window_size.x ||
-      new_position_x - this->radius <= 0) {
+      new_position_x - this->radius <= window_pos.x) {
 
     if (new_position_x + this->radius >= window_size.x) {
       new_position_x = window_size.x - this->radius;
     }
 
-    if (new_position_x - this->radius <= 0) {
-      new_position_x = this->radius;
+    if (new_position_x - this->radius <= window_pos.x) {
+      new_position_x = this->radius + window_pos.x;
     }
 
     auto new_x_vel = fabs(this->velocity.x * BOUNCE_PERCENTAGE) > MIN_BOUNCE
@@ -69,7 +71,7 @@ void CircleObject::constraint(const ImVec2 &position) {
   }
 
   if (new_position_y + this->radius >= window_size.y ||
-      new_position_y - this->radius <= 0) {
+      new_position_y - this->radius <= window_pos.y) {
 
     if (new_position_y + this->radius >= window_size.y) {
       new_position_y = window_size.y - this->radius;
@@ -80,8 +82,8 @@ void CircleObject::constraint(const ImVec2 &position) {
       this->acceleration = ImVec2(this->acceleration.x, acc.y * -1);
     }
 
-    if (new_position_y - this->radius <= 0) {
-      new_position_y = this->radius;
+    if (new_position_y - this->radius <= window_pos.y) {
+      new_position_y = this->radius + window_pos.y;
     }
 
     auto new_y_vel = fabs(this->velocity.y * BOUNCE_PERCENTAGE) > MIN_BOUNCE

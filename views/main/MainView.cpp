@@ -43,6 +43,7 @@ void MainView::createWindow() {
   this->gl_context = gl_context;
 
   this->setUpImGui();
+
   this->is_running = true;
 }
 
@@ -62,20 +63,25 @@ void MainView::setUpImGui() {
   // Setting up ImGui
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+
   ImGuiIO &io = ImGui::GetIO();
   (void)io;
 
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+  this->io = io;
+
   auto &style = ImGui::GetStyle();
-  style.WindowRounding = 5;
+  style.WindowRounding = 5.0f;
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
+  style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 
 #if defined(LIGHT_MODE)
   ImGui::StyleColorsLight();
 #else
   ImGui::StyleColorsDark();
 #endif
-
-  this->io = io;
 
   // Setup Platform/Renderer backends
   ImGui_ImplSDL3_InitForOpenGL(this->window, this->gl_context);
@@ -86,27 +92,6 @@ void MainView::processEvent() {
   while (SDL_PollEvent(&this->event)) {
     ImGui_ImplSDL3_ProcessEvent(&this->event);
     switch (this->event.type) {
-    // dealing with mouse events
-    case SDL_EVENT_MOUSE_BUTTON_DOWN:
-      if (this->event.button.button == SDL_BUTTON_LEFT) {
-        SystemState::SetPickedObject();
-      } else if (this->event.button.button == SDL_BUTTON_RIGHT) {
-        float mouse_pos_x;
-        float mouse_pos_y;
-
-        SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
-        SystemState::AddObject(new CircleObject(
-            ViewObjectsConfig::GetMass(), mouse_pos_x, mouse_pos_y,
-            ViewObjectsConfig::GetRadius(), ViewObjectsConfig::GetColor()));
-      }
-      break;
-    case SDL_EVENT_MOUSE_MOTION:
-      SystemState::UpdatePickedObject();
-      break;
-    case SDL_EVENT_MOUSE_BUTTON_UP:
-      SystemState::UnsetPickedObject();
-      break;
-
     // quitting window
     case SDL_EVENT_QUIT:
       this->is_running = false;
@@ -122,6 +107,8 @@ void MainView::processEvent() {
 void MainView::newFrame() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplSDL3_NewFrame();
+  ImGui::NewFrame();
+  ImGui::DockSpaceOverViewport();
 }
 
 void MainView::render() {
@@ -134,6 +121,13 @@ void MainView::render() {
                this->clear_color.y * this->clear_color.w,
                this->clear_color.z * this->clear_color.w, this->clear_color.w);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+  SDL_Window *backup_current_window = SDL_GL_GetCurrentWindow();
+  SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+  ImGui::UpdatePlatformWindows();
+  ImGui::RenderPlatformWindowsDefault();
+  SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+
   SDL_GL_SwapWindow(this->window);
 }
 
