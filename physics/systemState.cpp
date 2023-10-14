@@ -136,6 +136,7 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
     const float tangent_x = -1.0f * y_vector;
     const float tangent_y = x_vector;
 
+    // dot product tangent
     const float dp_tan_1 =
         circle_1_vec.x * tangent_x + circle_1_vec.y * tangent_y;
     const float dp_tan_2 =
