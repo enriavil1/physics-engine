@@ -8,7 +8,7 @@ private:
   static constexpr float drag_coeffiecient = 0.5f;
 
 public:
-  ImVec2 apply(float mass, float current_velocity) {
+  ImVec2 apply(float mass, float current_velocity, float area) {
     float drag_force = 0.5f * Gravity::drag_coeffiecient *
                        (current_velocity *
                         current_velocity); // D = 0.5 * (rho * C * Area * vel^2)

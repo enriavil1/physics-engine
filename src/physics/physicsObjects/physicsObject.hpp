@@ -3,8 +3,7 @@
 #include <vector>
 
 #include "../../../imgui/imgui.h"
-
-#include "../../forces/gravity.hpp"
+#include "../../forces/force.hpp"
 
 namespace ObjectColors {
 const ImU32 WHITE = IM_COL32(255, 255, 255, 255);

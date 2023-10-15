@@ -18,7 +18,7 @@ void CircleObject::update(const double &dt) {
   // we only need to multiple by pixels/meter to convert velocity
   while (!this->forces.empty()) {
     Force *force = this->forces[0];
-    auto new_acc = force->apply(this->mass, this->velocity.y);
+    auto new_acc = force->apply(this->mass, this->velocity.y, this->m_area);
     this->acceleration = ImVec2(this->acceleration.x + new_acc.x,
                                 this->acceleration.y + new_acc.y);
 
@@ -77,7 +77,7 @@ void CircleObject::constraint(const ImVec2 &position) {
 
       // we add the normal (inverse of gravity)
       Gravity g;
-      auto acc = g.apply(this->mass, this->velocity.y);
+      auto acc = g.apply(this->mass, this->velocity.y, this->m_area);
       this->acceleration = ImVec2(this->acceleration.x, acc.y * -1);
     }
 
