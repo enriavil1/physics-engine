@@ -54,8 +54,18 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Install OpenGL
+    - name: Install OpenGL Ubuntu
+      if: startsWith(matrix.os, 'ubuntu')
       run: sudo apt-get install libegl1-mesa-dev 
+
+    - name: Install Chocolatey
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+    - name: Install OpenGl with Chocolatey
+      if: startsWith(matrix.os, 'windows')
+      run: choco install libegl1-mesa-dev
 
     - name: Initiate Submodules
       run: git submodule update --init --recursive
