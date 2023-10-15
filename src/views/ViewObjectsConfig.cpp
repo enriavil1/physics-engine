@@ -20,7 +20,7 @@ float ViewObjectsConfig::s_mass = MASS_MIN;
 
 ImU32 ViewObjectsConfig::s_color = ObjectColors::WHITE;
 
-auto ViewObjectsConfig::s_rng = std::mt19937_64();
+std::mt19937_64 ViewObjectsConfig::s_rng = std::mt19937_64();
 
 ImGuiWindowFlags ViewObjectsConfig::window_flags = 0;
 

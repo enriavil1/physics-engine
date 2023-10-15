@@ -1,7 +1,10 @@
 #pragma once
 
-#include "../../forces/gravity.hpp"
+#include <cmath>
+
 #include "./physicsObject.hpp"
+
+#include "../../forces/gravity.hpp"
 
 class CircleObject : public PhysicsObject {
 private:
