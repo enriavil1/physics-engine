@@ -8,16 +8,17 @@
 
 class CircleObject : public PhysicsObject {
 private:
-  float radius = 0.0;
+  float radius = 0.0f;
 
 public:
   CircleObject(float mass, float x, float y, float radius,
                ImU32 color = ObjectColors::WHITE) {
-    this->mass = mass;
+    this->p_mass = mass;
     this->radius = radius;
+    this->p_area = pow(radius, 2) * 3.14;
 
-    this->position = ImVec2(x, y);
-    this->color = color;
+    this->p_position = ImVec2(x, y);
+    this->p_color = color;
   }
 
   ImVec2 getDistanceFromCenter() const;

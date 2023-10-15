@@ -44,8 +44,6 @@ void DrawView::render(const float &dt) {
 
   const auto view_port_size = ImGui::GetMainViewport()->WorkSize;
   ImGui::Begin("Draw View", NULL, DrawView::s_window_flags);
-  ImGui::SetWindowSize(ImVec2(600, 720));
-  ImGui::SetWindowPos(ImVec2((view_port_size.x / 2) - 300, 0));
 
   handleLeftClick();
   handleRightClick();
