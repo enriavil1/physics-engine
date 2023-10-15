@@ -76,7 +76,7 @@ void ViewObjectsConfig::ColorPicker3U32(const char *label, ImU32 *color,
 
 void ViewObjectsConfig::render() {
   static int e = 0;
-  ImGui::Begin("Object Config", __null, ViewObjectsConfig::window_flags);
+  ImGui::Begin("Object Config", NULL, ViewObjectsConfig::window_flags);
   ImGui::RadioButton("square", &e, 0);
   ImGui::SameLine();
   ImGui::RadioButton("circle", &e, 1);

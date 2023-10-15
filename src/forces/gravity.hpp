@@ -9,7 +9,7 @@ private:
 
 public:
   ImVec2 apply(float mass, float current_velocity) {
-    float drag_force = 0.5 * Gravity::drag_coeffiecient *
+    float drag_force = 0.5f * Gravity::drag_coeffiecient *
                        (current_velocity *
                         current_velocity); // D = 0.5 * (rho * C * Area * vel^2)
     ImVec2 drag_acc = ImVec2(0, drag_force / mass);

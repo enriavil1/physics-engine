@@ -7,7 +7,7 @@
 
 #include "src/views/ViewObjectsConfig.hpp"
 #include "src/views/ViewStats.hpp"
-#include "src/views/drawView/draw_view.hpp"
+#include "src/views/drawView/drawView.hpp"
 #include "src/views/main/MainView.hpp"
 
 int main() {

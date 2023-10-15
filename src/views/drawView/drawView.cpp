@@ -1,4 +1,4 @@
-#include "./draw_view.hpp"
+#include "./drawView.hpp"
 
 #include "../ViewObjectsConfig.hpp"
 
@@ -42,7 +42,7 @@ void DrawView::handleRightClick() {
 void DrawView::render(const float &dt) {
   ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 255));
 
-  ImGui::Begin("Draw View", __null, DrawView::s_window_flags);
+  ImGui::Begin("Draw View", NULL, DrawView::s_window_flags);
 
   handleLeftClick();
   handleRightClick();
