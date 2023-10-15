@@ -1,10 +1,5 @@
 #include "./systemState.hpp"
 
-#include "physicsObjects/circleObject.hpp"
-#include "physicsObjects/physicsObject.hpp"
-
-#include "../forces/gravity.hpp"
-
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
 std::vector<PhysicsObject *> SystemState::objects =

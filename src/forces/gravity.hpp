@@ -8,5 +8,5 @@ private:
   static constexpr float drag_coeffiecient = 0.5f;
 
 public:
-  ImVec2 apply(float mass, float current_velocity) override;
+  ImVec2 apply(float mass, float current_velocity);
 };
