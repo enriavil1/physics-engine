@@ -12,4 +12,4 @@ message(STATUS "[${PROJECT_NAME}] Library created")
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 Views)
+target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3)

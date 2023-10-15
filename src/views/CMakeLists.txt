@@ -11,4 +11,4 @@ add_library(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 message(STATUS "[${PROJECT_NAME}] Library created")
 
 # Link the library to dependencies (e.g., SDL3 and ImGui)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3 OpenGL::GL imgui)
