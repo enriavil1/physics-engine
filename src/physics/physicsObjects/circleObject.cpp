@@ -1,4 +1,3 @@
-#include <iostream>
 #define BOUNCE_PERCENTAGE -0.80f
 #define MIN_BOUNCE 0.1f
 

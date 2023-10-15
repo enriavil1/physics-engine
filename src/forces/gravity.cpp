@@ -1,4 +1,5 @@
 #include "./gravity.hpp"
+#include "./force.hpp"
 
 ImVec2 Gravity::apply(float mass, float current_velocity) {
   float drag_force = 0.5 * Gravity::drag_coeffiecient *
