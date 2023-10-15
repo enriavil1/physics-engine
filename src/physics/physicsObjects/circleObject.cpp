@@ -44,7 +44,7 @@ void CircleObject::update(const double &dt) {
 }
 
 void CircleObject::constraint(const ImVec2 &position) {
-  ImVec2 window_size = ImGui::GetWindowViewport()->WorkSize;
+  ImVec2 window_size = ImGui::GetWindowSize();
   ImVec2 window_pos = ImGui::GetWindowPos();
 
   float new_position_x = position.x;
@@ -52,11 +52,11 @@ void CircleObject::constraint(const ImVec2 &position) {
 
   // the radius is the distance from the center of the circle to the edge
   // new_position is only considering the center of the circle
-  if (new_position_x + this->radius >= window_size.x ||
+  if (new_position_x + this->radius >= window_size.x + window_pos.x ||
       new_position_x - this->radius <= window_pos.x) {
 
-    if (new_position_x + this->radius >= window_size.x) {
-      new_position_x = window_size.x - this->radius;
+    if (new_position_x + this->radius >= window_size.x + window_pos.x) {
+      new_position_x = window_size.x + window_pos.x - this->radius;
     }
 
     if (new_position_x - this->radius <= window_pos.x) {
@@ -69,11 +69,11 @@ void CircleObject::constraint(const ImVec2 &position) {
     this->velocity = ImVec2(new_x_vel, this->velocity.y);
   }
 
-  if (new_position_y + this->radius >= window_size.y ||
+  if (new_position_y + this->radius >= window_size.y + window_pos.y ||
       new_position_y - this->radius <= window_pos.y) {
 
-    if (new_position_y + this->radius >= window_size.y) {
-      new_position_y = window_size.y - this->radius;
+    if (new_position_y + this->radius >= window_size.y + window_pos.y) {
+      new_position_y = window_size.y + window_pos.y - this->radius;
 
       // we add the normal (inverse of gravity)
       Gravity g;

@@ -70,6 +70,7 @@ void MainView::setUpImGui() {
   (void)io;
 
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   this->io = io;
 
@@ -125,10 +126,13 @@ void MainView::render() {
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
   SDL_Window *backup_current_window = SDL_GL_GetCurrentWindow();
-  SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-  ImGui::UpdatePlatformWindows();
-  ImGui::RenderPlatformWindowsDefault();
-  SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+
+  if (this->io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
+    SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+  }
 
   SDL_GL_SwapWindow(this->window);
 }
