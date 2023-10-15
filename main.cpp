@@ -1,15 +1,14 @@
-#include <algorithm>
 #include <chrono>
-#include <system_error>
 
 #include "imgui/imgui.h"
-#include "physics/physicsObjects/circleObject.hpp"
-#include "physics/systemState.hpp"
 
-#include "views/ViewObjectsConfig.hpp"
-#include "views/ViewStats.hpp"
-#include "views/drawView/draw_view.hpp"
-#include "views/main/MainView.hpp"
+#include "src/physics/physicsObjects/circleObject.hpp"
+#include "src/physics/systemState.hpp"
+
+#include "src/views/ViewObjectsConfig.hpp"
+#include "src/views/ViewStats.hpp"
+#include "src/views/drawView/draw_view.hpp"
+#include "src/views/main/MainView.hpp"
 
 int main() {
   // this is mac versioning add other versions
@@ -47,7 +46,6 @@ int main() {
 
     while (frame_time > 0.0f) {
       const float time_step = std::min(frame_time, dt);
-      SystemState::ResolveCollisions();
       draw_view.render(time_step);
       frame_time -= dt;
     }
