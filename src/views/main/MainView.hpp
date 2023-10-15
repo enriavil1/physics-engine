@@ -5,14 +5,12 @@
 
 #include "../ViewPort.hpp"
 
-#include "../../imgui/backends/imgui_impl_opengl3.h"
-#include "../../imgui/backends/imgui_impl_sdl3.h"
-#include "../../imgui/imgui.h"
+#include "../../../imgui/backends/imgui_impl_opengl3.h"
+#include "../../../imgui/backends/imgui_impl_sdl3.h"
+#include "../../../imgui/imgui.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
-
-typedef unsigned int uint;
 
 class MainView : ViewPort {
 private:
@@ -21,8 +19,8 @@ private:
 
   bool is_running = false;
 
-  unsigned int width;
-  unsigned int height;
+  uint32_t width;
+  uint32_t height;
 
   SDL_Event event;
 

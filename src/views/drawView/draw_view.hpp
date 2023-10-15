@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../ViewPort.hpp"
 
 class DrawView : ViewPort {

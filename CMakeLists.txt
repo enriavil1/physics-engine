@@ -40,12 +40,12 @@ if(BUILD_IMGUI)
 endif()
 
 message(STATUS "[${PROJECT_NAME}] Adding forces as subdirectory")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/forces)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/forces)
 
 message(STATUS "[${PROJECT_NAME}] Adding objects as subdirectory")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/physics)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/physics)
 
 message(STATUS "[${PROJECT_NAME}] Adding views as subdirectory")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/views)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/views)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Forces Physics Views)
