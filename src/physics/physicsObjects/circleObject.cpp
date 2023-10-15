@@ -10,37 +10,34 @@ ImVec2 CircleObject::getDistanceFromCenter() const {
 
 void CircleObject::draw() {
   auto draw_list = ImGui::GetWindowDrawList();
-  draw_list->AddCircleFilled(this->position, this->radius, this->color, 0);
+  draw_list->AddCircleFilled(this->p_position, this->radius, this->p_color, 0);
 }
 
 void CircleObject::update(const double &dt) {
   // using pixels per meter since position is in pixels
   // we only need to multiple by pixels/meter to convert velocity
-  while (!this->forces.empty()) {
-    Force *force = this->forces[0];
-    auto new_acc = force->apply(this->mass, this->velocity.y, this->m_area);
-    this->acceleration = ImVec2(this->acceleration.x + new_acc.x,
-                                this->acceleration.y + new_acc.y);
+  while (!this->p_forces.empty()) {
+    Force *force = this->p_forces[0];
+    auto new_acc = force->apply(this->p_mass, this->p_vel.y, this->p_area);
+    this->p_acc = ImVec2(this->p_acc.x + new_acc.x, this->p_acc.y + new_acc.y);
 
-    this->forces.pop_back();
+    this->p_forces.pop_back();
   }
 
-  float new_position_x =
-      this->position.x +
-      ((this->velocity.x * dt) + (this->acceleration.x * (dt * dt))) *
-          ForceConstants::PIXELS_PER_METER;
-  float new_position_y =
-      this->position.y +
-      ((this->velocity.y * dt) + (this->acceleration.y * (dt * dt))) *
-          ForceConstants::PIXELS_PER_METER;
+  float new_position_x = this->p_position.x +
+                         ((this->p_vel.x * dt) + (this->p_acc.x * (dt * dt))) *
+                             ForceConstants::PIXELS_PER_METER;
+  float new_position_y = this->p_position.y +
+                         ((this->p_vel.y * dt) + (this->p_acc.y * (dt * dt))) *
+                             ForceConstants::PIXELS_PER_METER;
 
-  this->position = ImVec2(new_position_x, new_position_y);
+  this->p_position = ImVec2(new_position_x, new_position_y);
 
-  float new_velocity_x = this->velocity.x + this->acceleration.x * dt;
-  float new_velocity_y = this->velocity.y + this->acceleration.y * dt;
+  float new_velocity_x = this->p_vel.x + this->p_acc.x * dt;
+  float new_velocity_y = this->p_vel.y + this->p_acc.y * dt;
 
-  this->velocity = ImVec2(new_velocity_x, new_velocity_y);
-  this->acceleration = ImVec2(0, 0);
+  this->p_vel = ImVec2(new_velocity_x, new_velocity_y);
+  this->p_acc = ImVec2(0, 0);
 }
 
 void CircleObject::constraint(const ImVec2 &position) {
@@ -63,10 +60,10 @@ void CircleObject::constraint(const ImVec2 &position) {
       new_position_x = this->radius + window_pos.x;
     }
 
-    auto new_x_vel = fabs(this->velocity.x * BOUNCE_PERCENTAGE) > MIN_BOUNCE
-                         ? this->velocity.x * BOUNCE_PERCENTAGE
+    auto new_x_vel = fabs(this->p_vel.x * BOUNCE_PERCENTAGE) > MIN_BOUNCE
+                         ? this->p_vel.x * BOUNCE_PERCENTAGE
                          : 0.0f;
-    this->velocity = ImVec2(new_x_vel, this->velocity.y);
+    this->p_vel = ImVec2(new_x_vel, this->p_vel.y);
   }
 
   if (new_position_y + this->radius >= window_size.y + window_pos.y ||
@@ -77,18 +74,18 @@ void CircleObject::constraint(const ImVec2 &position) {
 
       // we add the normal (inverse of gravity)
       Gravity g;
-      auto acc = g.apply(this->mass, this->velocity.y, this->m_area);
-      this->acceleration = ImVec2(this->acceleration.x, acc.y * -1);
+      auto acc = g.apply(this->p_mass, this->p_vel.y, this->p_area);
+      this->p_acc = ImVec2(this->p_acc.x, acc.y * -1);
     }
 
     if (new_position_y - this->radius <= window_pos.y) {
       new_position_y = this->radius + window_pos.y;
     }
 
-    auto new_y_vel = fabs(this->velocity.y * BOUNCE_PERCENTAGE) > MIN_BOUNCE
-                         ? this->velocity.y * BOUNCE_PERCENTAGE
+    auto new_y_vel = fabs(this->p_vel.y * BOUNCE_PERCENTAGE) > MIN_BOUNCE
+                         ? this->p_vel.y * BOUNCE_PERCENTAGE
                          : 0.0f;
-    this->velocity = ImVec2(this->velocity.x, new_y_vel);
+    this->p_vel = ImVec2(this->p_vel.x, new_y_vel);
   }
 
   this->setPosition(ImVec2(new_position_x, new_position_y));
