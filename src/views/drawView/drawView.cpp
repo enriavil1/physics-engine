@@ -42,7 +42,10 @@ void DrawView::handleRightClick() {
 void DrawView::render(const float &dt) {
   ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 255));
 
+  const auto view_port_size = ImGui::GetMainViewport()->WorkSize;
   ImGui::Begin("Draw View", NULL, DrawView::s_window_flags);
+  ImGui::SetWindowSize(ImVec2(600, 720));
+  ImGui::SetWindowPos(ImVec2((view_port_size.x / 2) - 300, 0));
 
   handleLeftClick();
   handleRightClick();
