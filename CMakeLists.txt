@@ -50,4 +50,4 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/physics)
 message(STATUS "[${PROJECT_NAME}] Adding views as subdirectory")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/views)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Forces Physics Views)
+target_link_libraries(${PROJECT_NAME} PUBLIC Forces Views Physics)
