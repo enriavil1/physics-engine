@@ -1,6 +1,4 @@
 mkdir ./build
 
-cd ./build/
-cmake .. && cmake --build .
-
+cmake -S . -B ./build -D CMAKE_BUILD_TYPE=Release && cmake --build ./build
 echo 'done compiling'
