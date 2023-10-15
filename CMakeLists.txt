@@ -19,6 +19,8 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(OPERATING_SYSTEM "Apple")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
   set(OPERATING_SYSTEM "Win32")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  set(OPERATING_SYSTEM "Unix")
 endif()
 
 if(BUILD_OPENGL)

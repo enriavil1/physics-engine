@@ -22,8 +22,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Configure set up
+    - name: Install Opengl
       run: sudo apt-get install libegl1-mesa-dev && git submodule update --init --recursive 
+
+    - name: Initiate submodules
+      run: git submodule update --init --recursive
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
