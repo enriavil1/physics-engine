@@ -2,7 +2,7 @@
 #include "../physics/systemState.hpp"
 
 #define RADIUS_MIN 2.0f
-#define RADIUS_MAX 100.0f
+#define RADIUS_MAX 150.0f
 
 #define WIDTH_MIN 5.0f
 #define WIDTH_MAX 150.0f

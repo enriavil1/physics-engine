@@ -1,13 +1,16 @@
 #include "./systemState.hpp"
+#include "grid/gridCell.hpp"
 
 #define SUB_STEP_DIVISION 4.0f
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
+Grid SystemState::sm_grid = Grid();
+
 std::vector<PhysicsObject *> SystemState::objects =
     std::vector<PhysicsObject *>{};
 
-uint SystemState::GetObjectAmount() { return SystemState::objects.size(); }
+uint32_t SystemState::GetObjectAmount() { return SystemState::objects.size(); }
 
 void SystemState::AddObject(PhysicsObject *object) {
   SystemState::objects.push_back(object);
@@ -35,34 +38,68 @@ void SystemState::Update(float dt) {
       obj->constraint(obj->getPosition());
     }
 
+    SystemState::sm_grid.clear();
+    for (uint32_t i{0}; i < SystemState::objects.size(); ++i) {
+      SystemState::sm_grid.add(SystemState::objects[i], i);
+    }
     // every sub step we should resolve collisions of all balls and update draw
     SystemState::ResolveCollisions();
     SystemState::Draw();
   }
 }
 
-void SystemState::ResolveCollisions() {
-  for (int i = 0; i < SystemState::objects.size(); ++i) {
-    for (int j = 0; j < SystemState::objects.size(); ++j) {
-      PhysicsObject *obj = SystemState::objects[i];
-      PhysicsObject *obj_2 = SystemState::objects[j];
+void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
+  for (auto obj_2 : cell.getObjects()) {
 
-      if (obj == obj_2) {
-        continue;
-      }
+    if (obj == obj_2) {
+      continue;
+    }
 
-      float distance = 0.0f;
+    float distance = 0.0f;
 
-      const bool has_collision = SystemState::CheckCircleCollision(
+    const bool has_collision = SystemState::CheckCircleCollision(
+        reinterpret_cast<CircleObject *>(obj),
+        reinterpret_cast<CircleObject *>(obj_2), distance);
+
+    if (has_collision) {
+      SystemState::ResolveCircleCollision(
           reinterpret_cast<CircleObject *>(obj),
           reinterpret_cast<CircleObject *>(obj_2), distance);
-
-      if (has_collision) {
-        SystemState::ResolveCircleCollision(
-            reinterpret_cast<CircleObject *>(obj),
-            reinterpret_cast<CircleObject *>(obj_2), distance);
-      }
     }
+  }
+}
+
+void SystemState::ResolveCollisions() {
+  for (auto obj : SystemState::objects) {
+
+    uint32_t pos_x = obj->getPosition().x;
+    uint32_t pos_y = obj->getPosition().y;
+
+    SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
+
+    // check left
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - 150, pos_y));
+
+    // check above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y - 150));
+
+    // check left and above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - 150, pos_y - 150));
+
+    // check right
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + 150, pos_y));
+
+    // check below
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y + 150));
+
+    // check below and right
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + 150, pos_y + 150));
   }
 }
 
