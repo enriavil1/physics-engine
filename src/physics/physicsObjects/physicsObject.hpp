@@ -35,6 +35,6 @@ public:
   void applyForce(Force *force) { this->p_forces.push_back(force); }
 
   virtual void draw() = 0;
-  virtual void update(const double &dt /* change in time*/) = 0;
-  virtual void constraint(const ImVec2 &position) = 0;
+  virtual void update(const double& dt /* change in time*/) = 0;
+  virtual void constraint(const ImVec2& position) = 0;
 };

@@ -8,7 +8,7 @@
 ImGuiWindowFlags DrawView::s_window_flags = ImGuiWindowFlags_NoCollapse;
 
 void DrawView::handleLeftClick() {
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO& io = ImGui::GetIO();
   auto mouse_pos = io.MousePos;
 
   if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
@@ -23,7 +23,7 @@ void DrawView::handleLeftClick() {
 }
 
 void DrawView::handleRightClick() {
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO& io = ImGui::GetIO();
 
   auto add_circles = [io]() {
     auto mouse_pos = io.MousePos;
@@ -39,7 +39,7 @@ void DrawView::handleRightClick() {
   }
 }
 
-void DrawView::render(const float &dt) {
+void DrawView::render(const float& dt) {
   ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 255));
 
   const auto view_port_size = ImGui::GetMainViewport()->WorkSize;
@@ -48,9 +48,7 @@ void DrawView::render(const float &dt) {
   handleLeftClick();
   handleRightClick();
 
-  SystemState::ResolveCollisions();
   SystemState::Update(dt);
-  SystemState::Draw();
 
   ImGui::End();
   ImGui::PopStyleColor();
