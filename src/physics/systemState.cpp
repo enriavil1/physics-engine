@@ -22,16 +22,16 @@ void SystemState::Draw() {
 void SystemState::Update(float dt) {
   Gravity gravity;
 
-  const float sub_steps = dt / SUB_STEP_DIVISION;
+  const float sub_step = dt / SUB_STEP_DIVISION;
 
   // sub steps will make us low frame rate resistant
-  for (float i = sub_steps; i > 0; --i) {
+  for (float i = 0; i < dt; i += sub_step) {
     for (PhysicsObject *obj : SystemState::objects) {
       // we dont apply gravity onto the object we pick up
       if (obj != SystemState::m_picked_object) {
         obj->applyForce(&gravity);
       }
-      obj->update(dt);
+      obj->update(sub_step);
       obj->constraint(obj->getPosition());
     }
 

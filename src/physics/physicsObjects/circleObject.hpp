@@ -12,7 +12,7 @@ private:
 
 public:
   CircleObject(float mass, float x, float y, float radius,
-               ImU32 color = ObjectColors::WHITE) {
+               ImU32 color = IM_COL32_WHITE) {
     this->p_mass = mass;
     this->radius = radius;
     this->p_area = pow(radius, 2) * 3.14;
@@ -24,6 +24,6 @@ public:
   ImVec2 getDistanceFromCenter() const;
   void draw();
 
-  void update(const double &dt);
-  void constraint(const ImVec2 &position);
+  void update(const double& dt);
+  void constraint(const ImVec2& position);
 };
