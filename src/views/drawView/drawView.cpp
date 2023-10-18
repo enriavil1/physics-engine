@@ -48,9 +48,7 @@ void DrawView::render(const float &dt) {
   handleLeftClick();
   handleRightClick();
 
-  SystemState::ResolveCollisions();
   SystemState::Update(dt);
-  SystemState::Draw();
 
   ImGui::End();
   ImGui::PopStyleColor();

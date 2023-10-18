@@ -1,5 +1,7 @@
 #include "./systemState.hpp"
 
+#define SUB_STEP_DIVISION 4.0f
+
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
 std::vector<PhysicsObject *> SystemState::objects =
@@ -20,13 +22,22 @@ void SystemState::Draw() {
 void SystemState::Update(float dt) {
   Gravity gravity;
 
-  for (PhysicsObject *obj : SystemState::objects) {
-    // we dont apply gravity onto the object we pick up
-    if (obj != SystemState::m_picked_object) {
-      obj->applyForce(&gravity);
+  const float sub_steps = dt / SUB_STEP_DIVISION;
+
+  // sub steps will make us low frame rate resistant
+  for (float i = sub_steps; i > 0; --i) {
+    for (PhysicsObject *obj : SystemState::objects) {
+      // we dont apply gravity onto the object we pick up
+      if (obj != SystemState::m_picked_object) {
+        obj->applyForce(&gravity);
+      }
+      obj->update(dt);
+      obj->constraint(obj->getPosition());
     }
-    obj->update(dt);
-    obj->constraint(obj->getPosition());
+
+    // every sub step we should resolve collisions of all balls and update draw
+    SystemState::ResolveCollisions();
+    SystemState::Draw();
   }
 }
 
@@ -57,7 +68,7 @@ void SystemState::ResolveCollisions() {
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
                                          PhysicsObject *obj_2,
-                                         float &distance) {
+                                         float& distance) {
   const float pos_1_x = obj_1->getPosition().x;
   const float pos_1_y = obj_1->getPosition().y;
 
@@ -69,7 +80,7 @@ void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
 
 bool SystemState::CheckCircleCollision(CircleObject *circle_1,
                                        CircleObject *circle_2,
-                                       float &distance) {
+                                       float& distance) {
   // x or y are both the same thing
   // since the radius is constant
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
@@ -88,7 +99,7 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
 
 void SystemState::ResolveCircleCollision(CircleObject *circle_1,
                                          CircleObject *circle_2,
-                                         float &distance) {
+                                         float& distance) {
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
   const float distance_from_center_2 = circle_2->getDistanceFromCenter().x;
 

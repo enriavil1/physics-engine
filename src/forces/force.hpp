@@ -11,5 +11,6 @@ const float EPSILON = 0.000001f;
 
 class Force {
 public:
-  virtual ImVec2 apply(float mass, float current_velocity, float area) = 0;
+  virtual ImVec2 apply(const float& mass, const float& current_velocity,
+                       const float& area) = 0;
 };

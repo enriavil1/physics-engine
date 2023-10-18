@@ -24,10 +24,11 @@ std::mt19937_64 ViewObjectsConfig::s_rng = std::mt19937_64();
 
 ImGuiWindowFlags ViewObjectsConfig::window_flags = 0;
 
-void generateRamdonColor(ImU32 &col, std::mt19937_64 rng) {
+void generateRamdonColor(ImU32 &col, std::mt19937_64 &rng) {
   std::uniform_int_distribution<uint32_t> dist(0, 255);
-  col = IM_COL32(dist(rng), rand() % 256, rand() % 256,
-                 (rand() % (256 - 99)) + 100);
+  std::uniform_int_distribution<uint32_t> opaque_dst(155, 255);
+
+  col = IM_COL32(dist(rng), dist(rng), dist(rng), opaque_dst(rng));
 }
 
 void ViewObjectsConfig::HelpMarker(const char *desc) {
