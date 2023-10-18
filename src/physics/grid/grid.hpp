@@ -21,6 +21,9 @@ private:
 public:
   void clear() { this->m_cells = std::unordered_map<uint32_t, GridCell>{}; }
 
+  uint32_t getWidth() { return this->m_width; }
+  uint32_t getHeight() { return this->m_height; }
+
   uint32_t getCellID(uint32_t pos_x, uint32_t pos_y) {
     const auto window_height = ImGui::GetWindowHeight();
     const auto window_pos = ImGui::GetWindowPos();
@@ -45,7 +48,7 @@ public:
     return this->m_cells[id];
   }
 
-  void add(PhysicsObject *obj, uint32_t obj_index) {
+  void add(PhysicsObject *obj) {
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
 
     if (this->m_cells.find(id) == this->m_cells.end()) {

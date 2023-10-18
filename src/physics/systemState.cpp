@@ -40,7 +40,7 @@ void SystemState::Update(float dt) {
 
     SystemState::sm_grid.clear();
     for (uint32_t i{0}; i < SystemState::objects.size(); ++i) {
-      SystemState::sm_grid.add(SystemState::objects[i], i);
+      SystemState::sm_grid.add(SystemState::objects[i]);
     }
     // every sub step we should resolve collisions of all balls and update draw
     SystemState::ResolveCollisions();
@@ -75,31 +75,34 @@ void SystemState::ResolveCollisions() {
     uint32_t pos_x = obj->getPosition().x;
     uint32_t pos_y = obj->getPosition().y;
 
+    uint32_t width = SystemState::sm_grid.getWidth();
+    uint32_t height = SystemState::sm_grid.getHeight();
+
     SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
 
     // check left
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - 150, pos_y));
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
 
     // check above
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y - 150));
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
 
     // check left and above
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - 150, pos_y - 150));
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
 
     // check right
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + 150, pos_y));
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
 
     // check below
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y + 150));
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
 
     // check below and right
     SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + 150, pos_y + 150));
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
   }
 }
 
