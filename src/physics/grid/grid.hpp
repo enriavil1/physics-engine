@@ -10,7 +10,6 @@
 
 class Grid {
 private:
-  // TODO (enriavil1): add variable width and height cells by taking the biggest
   // size of width and height from objects
   uint32_t m_width = 20;
   uint32_t m_height = 20;
