@@ -12,8 +12,8 @@ class Grid {
 private:
   // TODO (enriavil1): add variable width and height cells by taking the biggest
   // size of width and height from objects
-  const uint32_t m_width = 150;
-  const uint32_t m_height = 150;
+  const uint32_t m_width = 50;
+  const uint32_t m_height = 50;
 
   std::unordered_map<uint32_t, GridCell> m_cells =
       std::unordered_map<uint32_t, GridCell>{};

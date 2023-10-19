@@ -88,10 +88,6 @@ void SystemState::ResolveCollisions() {
     SystemState::ResolveCellCollisions(
         obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
 
-    // check left and above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
-
     // check right
     SystemState::ResolveCellCollisions(
         obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
@@ -100,9 +96,21 @@ void SystemState::ResolveCollisions() {
     SystemState::ResolveCellCollisions(
         obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
 
+    // check right and above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
+
+    // check left and above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
+
     // check below and right
     SystemState::ResolveCellCollisions(
         obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
+
+    // check below and left
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
   }
 }
 
