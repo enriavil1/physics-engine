@@ -1,31 +1,35 @@
 #pragma once
 
 #include <cmath>
-#include <iostream>
 #include <vector>
 
 #include <SDL3/SDL.h>
 
+#include "grid/gridCell.hpp"
 #include "physicsObjects/circleObject.hpp"
 #include "physicsObjects/physicsObject.hpp"
 
-typedef uint32_t uint;
+#include "grid/grid.hpp"
 
 class SystemState {
 private:
   static PhysicsObject *m_picked_object;
 
+  static Grid sm_grid;
+
   static std::vector<PhysicsObject *> objects;
 
   static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
-                                     float &distance);
+                                     float& distance);
   static bool CheckCircleCollision(CircleObject *circle_1,
-                                   CircleObject *circle_2, float &distance);
+                                   CircleObject *circle_2, float& distance);
   static void ResolveCircleCollision(CircleObject *circle_1,
-                                     CircleObject *circle_2, float &distance);
+                                     CircleObject *circle_2, float& distance);
+
+  static void ResolveCellCollisions(PhysicsObject *obj, GridCell& cell);
 
 public:
-  static uint GetObjectAmount();
+  static uint32_t GetObjectAmount();
   static void AddObject(PhysicsObject *object);
 
   static void Draw();
@@ -33,8 +37,8 @@ public:
 
   static void ResolveCollisions();
 
-  static void SetPickedObject(const float &mouse_pos_x,
-                              const float &mouse_pos_y) {
+  static void SetPickedObject(const float& mouse_pos_x,
+                              const float& mouse_pos_y) {
     for (PhysicsObject *obj : SystemState::objects) {
       const ImVec2 obj_pos = obj->getPosition();
       const ImVec2 distance_from_center = obj->getDistanceFromCenter();
@@ -54,8 +58,8 @@ public:
     }
   };
 
-  static void UpdatePickedObject(const float &mouse_pos_x,
-                                 const float &mouse_pos_y) {
+  static void UpdatePickedObject(const float& mouse_pos_x,
+                                 const float& mouse_pos_y) {
     if (SystemState::m_picked_object != nullptr) {
       SystemState::m_picked_object->setPosition(
           ImVec2(mouse_pos_x, mouse_pos_y));

@@ -5,10 +5,6 @@
 #include "../../../imgui/imgui.h"
 #include "../../forces/force.hpp"
 
-namespace ObjectColors {
-const ImU32 WHITE = IM_COL32(255, 255, 255, 255);
-}
-
 class PhysicsObject {
 protected:
   float p_mass;
@@ -17,10 +13,10 @@ protected:
   std::vector<Force *> p_forces = std::vector<Force *>{};
 
   ImVec2 p_position;
-  ImVec2 p_vel = ImVec2(0.0f, 0.0f);
-  ImVec2 p_acc = ImVec2(0.0f, 0.0f);
+  ImVec2 p_vel;
+  ImVec2 p_acc;
 
-  ImU32 p_color = ObjectColors::WHITE;
+  ImU32 p_color = IM_COL32_WHITE;
 
 public:
   void setPosition(ImVec2 new_pos) { this->p_position = new_pos; }

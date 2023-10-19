@@ -1,13 +1,16 @@
 #include "./systemState.hpp"
+#include "grid/gridCell.hpp"
 
 #define SUB_STEP_DIVISION 4.0f
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
+Grid SystemState::sm_grid = Grid();
+
 std::vector<PhysicsObject *> SystemState::objects =
     std::vector<PhysicsObject *>{};
 
-uint SystemState::GetObjectAmount() { return SystemState::objects.size(); }
+uint32_t SystemState::GetObjectAmount() { return SystemState::objects.size(); }
 
 void SystemState::AddObject(PhysicsObject *object) {
   SystemState::objects.push_back(object);
@@ -22,47 +25,92 @@ void SystemState::Draw() {
 void SystemState::Update(float dt) {
   Gravity gravity;
 
-  const float sub_steps = dt / SUB_STEP_DIVISION;
+  const float sub_step = dt / SUB_STEP_DIVISION;
 
   // sub steps will make us low frame rate resistant
-  for (float i = sub_steps; i > 0; --i) {
+  for (float i = 0; i < dt; i += sub_step) {
     for (PhysicsObject *obj : SystemState::objects) {
       // we dont apply gravity onto the object we pick up
       if (obj != SystemState::m_picked_object) {
         obj->applyForce(&gravity);
       }
-      obj->update(dt);
+      obj->update(sub_step);
       obj->constraint(obj->getPosition());
     }
 
+    SystemState::sm_grid.clear();
+    for (const auto obj : SystemState::objects) {
+      SystemState::sm_grid.add(obj);
+    }
     // every sub step we should resolve collisions of all balls and update draw
     SystemState::ResolveCollisions();
     SystemState::Draw();
   }
 }
 
-void SystemState::ResolveCollisions() {
-  for (int i = 0; i < SystemState::objects.size(); ++i) {
-    for (int j = 0; j < SystemState::objects.size(); ++j) {
-      PhysicsObject *obj = SystemState::objects[i];
-      PhysicsObject *obj_2 = SystemState::objects[j];
+void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
+  for (auto obj_2 : cell.getObjects()) {
 
-      if (obj == obj_2) {
-        continue;
-      }
+    if (obj == obj_2) {
+      continue;
+    }
 
-      float distance = 0.0f;
+    float distance = 0.0f;
 
-      const bool has_collision = SystemState::CheckCircleCollision(
+    const bool has_collision = SystemState::CheckCircleCollision(
+        reinterpret_cast<CircleObject *>(obj),
+        reinterpret_cast<CircleObject *>(obj_2), distance);
+
+    if (has_collision) {
+      SystemState::ResolveCircleCollision(
           reinterpret_cast<CircleObject *>(obj),
           reinterpret_cast<CircleObject *>(obj_2), distance);
-
-      if (has_collision) {
-        SystemState::ResolveCircleCollision(
-            reinterpret_cast<CircleObject *>(obj),
-            reinterpret_cast<CircleObject *>(obj_2), distance);
-      }
     }
+  }
+}
+
+void SystemState::ResolveCollisions() {
+  for (auto obj : SystemState::objects) {
+
+    uint32_t pos_x = obj->getPosition().x;
+    uint32_t pos_y = obj->getPosition().y;
+
+    uint32_t width = SystemState::sm_grid.getWidth();
+    uint32_t height = SystemState::sm_grid.getHeight();
+
+    SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
+
+    // check left
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
+
+    // check above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
+
+    // check right
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
+
+    // check below
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
+
+    // check right and above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
+
+    // check left and above
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
+
+    // check below and right
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
+
+    // check below and left
+    SystemState::ResolveCellCollisions(
+        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
   }
 }
 

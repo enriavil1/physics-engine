@@ -2,7 +2,7 @@
 #include "../physics/systemState.hpp"
 
 #define RADIUS_MIN 2.0f
-#define RADIUS_MAX 100.0f
+#define RADIUS_MAX 150.0f
 
 #define WIDTH_MIN 5.0f
 #define WIDTH_MAX 150.0f
@@ -18,13 +18,13 @@ float ViewObjectsConfig::s_height = HEIGHT_MIN;
 float ViewObjectsConfig::s_width = WIDTH_MIN;
 float ViewObjectsConfig::s_mass = MASS_MIN;
 
-ImU32 ViewObjectsConfig::s_color = ObjectColors::WHITE;
+ImU32 ViewObjectsConfig::s_color = IM_COL32_WHITE;
 
 std::mt19937_64 ViewObjectsConfig::s_rng = std::mt19937_64();
 
 ImGuiWindowFlags ViewObjectsConfig::window_flags = 0;
 
-void generateRamdonColor(ImU32 &col, std::mt19937_64 &rng) {
+void generateRamdonColor(ImU32& col, std::mt19937_64& rng) {
   std::uniform_int_distribution<uint32_t> dist(0, 255);
   std::uniform_int_distribution<uint32_t> opaque_dst(155, 255);
 
