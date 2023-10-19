@@ -39,8 +39,8 @@ void SystemState::Update(float dt) {
     }
 
     SystemState::sm_grid.clear();
-    for (uint32_t i{0}; i < SystemState::objects.size(); ++i) {
-      SystemState::sm_grid.add(SystemState::objects[i]);
+    for (const auto obj : SystemState::objects) {
+      SystemState::sm_grid.add(obj);
     }
     // every sub step we should resolve collisions of all balls and update draw
     SystemState::ResolveCollisions();
