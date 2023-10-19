@@ -13,7 +13,7 @@ void CircleObject::draw() {
   draw_list->AddCircleFilled(this->p_position, this->radius, this->p_color, 0);
 }
 
-void CircleObject::update(const double &dt) {
+void CircleObject::update(const double& dt) {
   // using pixels per meter since position is in pixels
   // we only need to multiple by pixels/meter to convert velocity
   while (!this->p_forces.empty()) {
@@ -40,24 +40,32 @@ void CircleObject::update(const double &dt) {
   this->p_acc = ImVec2(0, 0);
 }
 
-void CircleObject::constraint(const ImVec2 &position) {
-  ImVec2 window_size = ImGui::GetWindowSize();
+void CircleObject::constraint(const ImVec2& position) {
+  ImVec2 window_max = ImGui::GetWindowContentRegionMax();
+  ImVec2 window_min = ImGui::GetWindowContentRegionMin();
+
   ImVec2 window_pos = ImGui::GetWindowPos();
+
+  const float max_x = window_max.x + window_pos.x;
+  const float min_x = window_min.x + window_pos.x;
+
+  const float max_y = window_max.y + window_pos.y;
+  const float min_y = window_min.y + window_pos.y;
 
   float new_position_x = position.x;
   float new_position_y = position.y;
 
   // the radius is the distance from the center of the circle to the edge
   // new_position is only considering the center of the circle
-  if (new_position_x + this->radius >= window_size.x + window_pos.x ||
-      new_position_x - this->radius <= window_pos.x) {
+  if (new_position_x + this->radius >= max_x ||
+      new_position_x - this->radius <= min_x) {
 
-    if (new_position_x + this->radius >= window_size.x + window_pos.x) {
-      new_position_x = window_size.x + window_pos.x - this->radius;
+    if (new_position_x + this->radius >= max_x) {
+      new_position_x = max_x - this->radius;
     }
 
     if (new_position_x - this->radius <= window_pos.x) {
-      new_position_x = this->radius + window_pos.x;
+      new_position_x = this->radius + min_x;
     }
 
     auto new_x_vel = fabs(this->p_vel.x * BOUNCE_PERCENTAGE) > MIN_BOUNCE
@@ -66,11 +74,11 @@ void CircleObject::constraint(const ImVec2 &position) {
     this->p_vel = ImVec2(new_x_vel, this->p_vel.y);
   }
 
-  if (new_position_y + this->radius >= window_size.y + window_pos.y ||
-      new_position_y - this->radius <= window_pos.y) {
+  if (new_position_y + this->radius >= max_y ||
+      new_position_y - this->radius <= min_y) {
 
-    if (new_position_y + this->radius >= window_size.y + window_pos.y) {
-      new_position_y = window_size.y + window_pos.y - this->radius;
+    if (new_position_y + this->radius >= max_y) {
+      new_position_y = max_y - this->radius;
 
       // we add the normal (inverse of gravity)
       Gravity g;
@@ -78,8 +86,8 @@ void CircleObject::constraint(const ImVec2 &position) {
       this->p_acc = ImVec2(this->p_acc.x, acc.y * -1);
     }
 
-    if (new_position_y - this->radius <= window_pos.y) {
-      new_position_y = this->radius + window_pos.y;
+    if (new_position_y - this->radius <= min_y) {
+      new_position_y = this->radius + min_y;
     }
 
     auto new_y_vel = fabs(this->p_vel.y * BOUNCE_PERCENTAGE) > MIN_BOUNCE
