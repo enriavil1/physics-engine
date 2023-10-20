@@ -208,12 +208,14 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
     const float dp_tan_2 =
         circle_2_vec.x * tangent_x + circle_2_vec.y * tangent_y;
 
+    const float total_mass = circle_1->getMass() + circle_2->getMass();
+
     const float m1 = (dp_num_1 * (circle_1->getMass() - circle_2->getMass()) +
                       (2.0f * circle_2->getMass() * dp_num_2)) /
-                     (circle_1->getMass() + circle_2->getMass());
+                     total_mass;
     const float m2 = (dp_num_2 * (circle_2->getMass() - circle_1->getMass()) +
                       (2.0f * circle_1->getMass() * dp_num_1)) /
-                     (circle_1->getMass() + circle_2->getMass());
+                     total_mass;
 
     const float new_vel_1_x = tangent_x * dp_tan_1 + x_vector * m1;
     const float new_vel_1_y = tangent_y * dp_tan_1 + y_vector * m1;
