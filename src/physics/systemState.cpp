@@ -1,5 +1,6 @@
 #include "./systemState.hpp"
 #include "grid/gridCell.hpp"
+#include <algorithm>
 
 #define SUB_STEP_DIVISION 4.0f
 
@@ -27,6 +28,9 @@ void SystemState::Update(float dt) {
 
   const float sub_step = dt / SUB_STEP_DIVISION;
 
+  float max_width = 10;
+  float max_height = 10;
+
   // sub steps will make us low frame rate resistant
   for (float i = 0; i < dt; i += sub_step) {
     for (PhysicsObject *obj : SystemState::objects) {
@@ -36,9 +40,13 @@ void SystemState::Update(float dt) {
       }
       obj->update(sub_step);
       obj->constraint(obj->getPosition());
+
+      max_width = std::max(max_width, obj->getDistanceFromCenter().x);
+      max_height = std::max(max_height, obj->getDistanceFromCenter().y);
     }
 
     SystemState::sm_grid.clear();
+    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
     for (const auto obj : SystemState::objects) {
       SystemState::sm_grid.add(obj);
     }
