@@ -64,7 +64,7 @@ void CircleObject::constraint(const ImVec2& position) {
       new_position_x = max_x - this->radius;
     }
 
-    if (new_position_x - this->radius <= window_pos.x) {
+    if (new_position_x - this->radius <= min_x) {
       new_position_x = this->radius + min_x;
     }
 

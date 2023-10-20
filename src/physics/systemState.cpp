@@ -2,7 +2,12 @@
 #include "grid/gridCell.hpp"
 #include <algorithm>
 
-#define SUB_STEP_DIVISION 4.0f
+#define MINIMUM_CELL_WIDTH 2
+#define MINIMUM_CELL_HEIGHT 2
+
+#define SUB_STEP_DIVISION 8.0f
+
+#define EPSILON 0.0001f
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
@@ -28,8 +33,8 @@ void SystemState::Update(float dt) {
 
   const float sub_step = dt / SUB_STEP_DIVISION;
 
-  float max_width = 10;
-  float max_height = 10;
+  float max_width = MINIMUM_CELL_WIDTH;
+  float max_height = MINIMUM_CELL_HEIGHT;
 
   // sub steps will make us low frame rate resistant
   for (float i = 0; i < dt; i += sub_step) {
@@ -149,8 +154,7 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
       reinterpret_cast<PhysicsObject *>(circle_1),
       reinterpret_cast<PhysicsObject *>(circle_2), distance);
 
-  return min_distance >= fabs(distance) - ForceConstants::EPSILON &&
-         fabs(distance) > ForceConstants::EPSILON;
+  return min_distance > distance - EPSILON && distance > EPSILON;
 }
 
 void SystemState::ResolveCircleCollision(CircleObject *circle_1,
