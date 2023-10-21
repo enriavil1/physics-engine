@@ -21,6 +21,8 @@ private:
 
   static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
                                      float& distance);
+
+  // Circle object specific
   static bool CheckCircleCollision(CircleObject *circle_1,
                                    CircleObject *circle_2, float& distance);
   static void ResolveCircleCollision(CircleObject *circle_1,
