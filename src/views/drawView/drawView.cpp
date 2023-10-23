@@ -1,10 +1,5 @@
 #include "./drawView.hpp"
 
-#include "../ViewObjectsConfig.hpp"
-
-#include "../../physics/physicsObjects/circleObject.hpp"
-#include "../../physics/systemState.hpp"
-
 ImGuiWindowFlags DrawView::s_window_flags = ImGuiWindowFlags_NoCollapse;
 
 void DrawView::handleLeftClick() {

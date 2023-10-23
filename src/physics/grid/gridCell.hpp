@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../physicsObjects/physicsObject.hpp"
+#include "../physics_objects/physicsObject.hpp"
 
 class GridCell {
 private:

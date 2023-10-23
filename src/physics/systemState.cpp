@@ -1,6 +1,4 @@
 #include "./systemState.hpp"
-#include "grid/gridCell.hpp"
-#include <algorithm>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2

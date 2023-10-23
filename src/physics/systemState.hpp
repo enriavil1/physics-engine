@@ -1,15 +1,17 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
 #include <SDL3/SDL.h>
 
 #include "grid/gridCell.hpp"
-#include "physicsObjects/circleObject.hpp"
-#include "physicsObjects/physicsObject.hpp"
+#include "physics_objects/circleObject.hpp"
+#include "physics_objects/physicsObject.hpp"
 
 #include "grid/grid.hpp"
+#include "grid/gridCell.hpp"
 
 class SystemState {
 private:

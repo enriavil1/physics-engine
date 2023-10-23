@@ -2,7 +2,6 @@
 
 #include "imgui/imgui.h"
 
-#include "src/physics/physicsObjects/circleObject.hpp"
 #include "src/physics/systemState.hpp"
 
 #include "src/views/ViewObjectsConfig.hpp"
@@ -24,7 +23,7 @@ int main() {
   auto object_config_modal = ViewObjectsConfig();
   auto draw_view = DrawView();
 
-  auto &io = ImGui::GetIO();
+  auto& io = ImGui::GetIO();
 
   const float dt = 1.0f / io.Framerate;
 

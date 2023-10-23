@@ -6,7 +6,7 @@
 
 #include "./gridCell.hpp"
 
-#include "../physicsObjects/physicsObject.hpp"
+#include "../physics_objects/physicsObject.hpp"
 
 class Grid {
 private:
