@@ -1,7 +1,10 @@
 #include "./worker.hpp"
+#include <iostream>
 
-Worker::Worker(TaskQueue& task_queue, uint32_t id)
-    : m_id{id}, m_task_queue{&task_queue} {}
+Worker::Worker(TaskQueue &task_queue, uint32_t id)
+    : m_id{id}, m_task_queue{&task_queue} {
+  this->m_thread = std::thread([this]() { this->run(); });
+}
 
 void Worker::run() {
   while (this->m_is_running) {

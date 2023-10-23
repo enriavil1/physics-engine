@@ -44,6 +44,7 @@ if(BUILD_THREADS)
   target_compile_definitions(
     ${PROJECT_NAME} PUBLIC USE_MULTI_THREADS=1
                            AMOUNT_OF_THREADS=${AMOUNT_OF_THREADS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC ThreadPool)
 endif()
 
 if(BUILD_IMGUI)

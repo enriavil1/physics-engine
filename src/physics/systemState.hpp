@@ -18,7 +18,7 @@ class SystemState {
 private:
   static PhysicsObject *m_picked_object;
 
-  static ThreadPool *sm_thread_pool;
+  static ThreadPool sm_thread_pool;
 
   static Grid sm_grid;
 

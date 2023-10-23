@@ -7,9 +7,11 @@
 
 class Worker {
 private:
+  std::thread m_thread;
+
   uint32_t m_id = 0;
   bool m_is_running = true;
-  std::thread m_thread;
+
 
   std::function<void()> m_task = nullptr;
   TaskQueue *m_task_queue = nullptr;

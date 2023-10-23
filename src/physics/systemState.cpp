@@ -9,9 +9,7 @@
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
-#ifdef USE_MULTI_THREADS
-ThreadPool *SystemState::sm_thread_pool = new ThreadPool(AMOUNT_OF_THREADS);
-#endif
+ThreadPool SystemState::sm_thread_pool = ThreadPool(10);
 
 Grid SystemState::sm_grid = Grid();
 
@@ -63,7 +61,7 @@ void SystemState::Update(float dt) {
   }
 }
 
-void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell &cell) {
+void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
   for (auto obj_2 : cell.getObjects()) {
 
     if (obj == obj_2) {
@@ -127,12 +125,12 @@ void SystemState::ResolveNeighborCellCollisions(PhysicsObject *obj,
 
 void SystemState::ResolveMultiThreadedCollisions() {
   const uint32_t slice_size = SystemState::objects.size() /
-                              SystemState::sm_thread_pool->getThreadCount();
+                              SystemState::sm_thread_pool.getThreadCount();
 
-  for (uint32_t i = 0; i < SystemState::objects.size(); i += slice_size) {
-    SystemState::sm_thread_pool->addTask([i, slice_size] {
+  for (uint32_t i = 0; i < SystemState::objects.size() / 2; i += slice_size) {
+    SystemState::sm_thread_pool.addTask([i, slice_size]() {
       for (uint32_t pos = i; pos < i + slice_size; ++pos) {
-        auto obj = SystemState::objects[i];
+        auto obj = SystemState::objects[pos];
         uint32_t pos_x = obj->getPosition().x;
         uint32_t pos_y = obj->getPosition().y;
 
@@ -141,7 +139,22 @@ void SystemState::ResolveMultiThreadedCollisions() {
     });
   }
 
-  SystemState::sm_thread_pool->waitForCompletion();
+  SystemState::sm_thread_pool.waitForCompletion();
+
+  for (uint32_t i = SystemState::objects.size() / 2;
+       i < SystemState::objects.size(); i += slice_size) {
+    SystemState::sm_thread_pool.addTask([i, slice_size]() {
+      for (uint32_t pos = i; pos < i + slice_size; ++pos) {
+        auto obj = SystemState::objects[pos];
+        uint32_t pos_x = obj->getPosition().x;
+        uint32_t pos_y = obj->getPosition().y;
+
+        SystemState::ResolveNeighborCellCollisions(obj, pos_x, pos_y);
+      }
+    });
+  }
+
+  SystemState::sm_thread_pool.waitForCompletion();
 }
 
 void SystemState::ResolveSingleThreadedCollisions() {
@@ -160,7 +173,7 @@ void SystemState::ResolveCollisions() {
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
                                          PhysicsObject *obj_2,
-                                         float &distance) {
+                                         float& distance) {
   const float pos_1_x = obj_1->getPosition().x;
   const float pos_1_y = obj_1->getPosition().y;
 
@@ -172,7 +185,7 @@ void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
 
 bool SystemState::CheckCircleCollision(CircleObject *circle_1,
                                        CircleObject *circle_2,
-                                       float &distance) {
+                                       float& distance) {
   // x or y are both the same thing
   // since the radius is constant
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
@@ -190,7 +203,7 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
 
 void SystemState::ResolveCircleCollision(CircleObject *circle_1,
                                          CircleObject *circle_2,
-                                         float &distance) {
+                                         float& distance) {
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
   const float distance_from_center_2 = circle_2->getDistanceFromCenter().x;
 
