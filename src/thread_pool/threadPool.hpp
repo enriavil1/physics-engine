@@ -18,6 +18,8 @@ public:
   ThreadPool(uint32_t thread_count);
   virtual ~ThreadPool();
 
-  template <typename TCallback> void addTask(TCallback&& callback);
+  template <typename TCallback> void addTask(TCallback &&callback);
   void waitForCompletion() const;
+
+  uint32_t getThreadCount() { return this->m_thread_count; }
 };

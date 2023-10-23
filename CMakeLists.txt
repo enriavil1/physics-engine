@@ -15,6 +15,8 @@ option(BUILD_IMGUI "Build with ImGui support" ON)
 option(BUILD_OPENGL "Build with OpenGL support" ON)
 option(BUILD_THREADS "Build with Multi thread support" ON)
 
+option(AMOUNT_OF_THREADS "The amount of threads used by the thread pool" 10)
+
 # Check the operating system setup
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(OPERATING_SYSTEM "Apple")
@@ -39,6 +41,9 @@ endif()
 if(BUILD_THREADS)
   message(STATUS "[${PROJECT_NAME}] Adding ThreadPool")
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/thread_pool)
+  target_compile_definitions(
+    ${PROJECT_NAME} PUBLIC USE_MULTI_THREADS=1
+                           AMOUNT_OF_THREADS=${AMOUNT_OF_THREADS})
 endif()
 
 if(BUILD_IMGUI)

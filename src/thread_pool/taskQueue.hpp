@@ -16,9 +16,9 @@ private:
 public:
   static void wait() { std::this_thread::yield(); }
 
-  template <typename TCallBack> void addTask(TCallBack&& callback);
+  template <typename TCallback> void addTask(TCallback &&callback);
 
-  template <typename TCallBack> void getTask(TCallBack& callback);
+  template <typename TCallback> void getTask(TCallback &callback);
 
   void waitForCompletion() const;
 

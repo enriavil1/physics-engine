@@ -10,12 +10,12 @@ ThreadPool::ThreadPool(uint32_t thread_count) : m_thread_count{thread_count} {
 
 ThreadPool::~ThreadPool() {
   // need to stop all workers running
-  for (Worker& worker : this->m_workers) {
+  for (Worker &worker : this->m_workers) {
     worker.stop();
   }
 }
 
-template <typename TCallback> void ThreadPool::addTask(TCallback&& callback) {
+template <typename TCallback> void ThreadPool::addTask(TCallback &&callback) {
   this->m_task_queue.addTask(std::forward<TCallback>(callback));
 }
 

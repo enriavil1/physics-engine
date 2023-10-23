@@ -1,12 +1,12 @@
 #include "./taskQueue.hpp"
 
-template <typename TCallBack> void TaskQueue::addTask(TCallBack&& callback) {
+template <typename TCallback> void TaskQueue::addTask(TCallback &&callback) {
   std::lock_guard<std::mutex> lock_guard{this->m_mutex};
   this->m_tasks.push(callback);
   ++this->m_remaining_tasks;
 }
 
-template <typename TCallBack> void TaskQueue::getTask(TCallBack& callback) {
+template <typename TCallBack> void TaskQueue::getTask(TCallBack &callback) {
   std::lock_guard<std::mutex> lock_guard{this->m_mutex};
 
   if (this->m_remaining_tasks == 0) {
