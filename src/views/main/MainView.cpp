@@ -1,13 +1,5 @@
 #include "./MainView.hpp"
 
-#include "../../physics/physicsObjects/circleObject.hpp"
-#include "../../physics/systemState.hpp"
-
-#include "../ViewObjectsConfig.hpp"
-#include "../ViewStats.hpp"
-
-#include <iostream>
-
 void MainView::createWindow() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
@@ -66,7 +58,7 @@ void MainView::setUpImGui() {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
 
-  ImGuiIO &io = ImGui::GetIO();
+  ImGuiIO& io = ImGui::GetIO();
   (void)io;
 
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -74,7 +66,7 @@ void MainView::setUpImGui() {
 
   this->io = io;
 
-  auto &style = ImGui::GetStyle();
+  auto& style = ImGui::GetStyle();
   style.WindowRounding = 5.0f;
   style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
