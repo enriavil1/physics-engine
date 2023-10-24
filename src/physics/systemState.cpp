@@ -124,8 +124,10 @@ void SystemState::ResolveNeighborCellCollisions(PhysicsObject *obj,
 }
 
 void SystemState::ResolveMultiThreadedCollisions() {
-  const uint32_t slice_size = SystemState::objects.size() /
-                              SystemState::sm_thread_pool.getThreadCount();
+  const uint32_t slice_size =
+      std::max(static_cast<int>(SystemState::objects.size() /
+                                SystemState::sm_thread_pool.getThreadCount()),
+               1);
 
   for (uint32_t i = 0; i < SystemState::objects.size() / 2; i += slice_size) {
     SystemState::sm_thread_pool.addTask([i, slice_size]() {
