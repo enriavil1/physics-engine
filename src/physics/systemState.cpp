@@ -133,7 +133,6 @@ void SystemState::ResolveMultiThreadedCollisions() {
     SystemState::sm_thread_pool.addTask([i, slice_size]() {
       for (uint32_t pos = i; pos < i + slice_size; ++pos) {
         auto obj = SystemState::objects[pos];
-        std::cout << obj << std::endl;
         uint32_t pos_x = obj->getPosition().x;
         uint32_t pos_y = obj->getPosition().y;
 
@@ -172,6 +171,7 @@ void SystemState::ResolveSingleThreadedCollisions() {
 
 void SystemState::ResolveCollisions() {
   SystemState::ResolveMultiThreadedCollisions();
+  // SystemState::ResolveSingleThreadedCollisions();
 }
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,

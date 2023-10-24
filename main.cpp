@@ -23,7 +23,7 @@ int main() {
   auto object_config_modal = ViewObjectsConfig();
   auto draw_view = DrawView();
 
-  auto &io = ImGui::GetIO();
+  auto& io = ImGui::GetIO();
 
   const float dt = 1.0f / io.Framerate;
 
