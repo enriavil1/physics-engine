@@ -1,11 +1,8 @@
 #pragma once
 
-#include <iostream>
-#include <ostream>
 #include <thread>
 #include <vector>
 
-#include "taskQueue.hpp"
 #include "worker.hpp"
 
 typedef std::vector<Worker> workers;

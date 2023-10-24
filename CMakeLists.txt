@@ -36,6 +36,7 @@ endif()
 if(BUILD_SDL)
   message(STATUS "[${PROJECT_NAME}] Adding SDL3")
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SDL)
+  target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3)
 endif()
 
 if(BUILD_THREADS)

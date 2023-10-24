@@ -4,8 +4,6 @@
 #include <cmath>
 #include <vector>
 
-#include <SDL3/SDL.h>
-
 #include "physics_objects/circleObject.hpp"
 #include "physics_objects/physicsObject.hpp"
 

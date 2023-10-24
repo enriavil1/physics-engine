@@ -4,6 +4,7 @@
 perf.data*
 .idea
 .vscode
+.cache
 .vs
 *.code-workspace
 *.hrd

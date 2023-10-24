@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -15,8 +14,7 @@ private:
   uint32_t m_width = 20;
   uint32_t m_height = 20;
 
-  std::unordered_map<uint32_t, GridCell> m_cells =
-      std::unordered_map<uint32_t, GridCell>{};
+  std::unordered_map<uint32_t, GridCell> m_cells;
 
 public:
   void clear() { this->m_cells = std::unordered_map<uint32_t, GridCell>{}; }
@@ -61,7 +59,6 @@ public:
 
   void add(PhysicsObject *obj) {
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
-
     this->m_cells[id].add(obj);
   }
 };
