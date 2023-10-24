@@ -1,5 +1,4 @@
 #include "./worker.hpp"
-#include <iostream>
 
 Worker::Worker(TaskQueue& task_queue, uint32_t id)
     : m_id{id}, m_task_queue{&task_queue} {

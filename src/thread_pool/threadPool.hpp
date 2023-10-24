@@ -25,7 +25,7 @@ public:
     }
   }
 
-  virtual ~ThreadPool() {
+  ~ThreadPool() {
     // need to stop all workers running
     for (Worker& worker : this->m_workers) {
       worker.stop();
