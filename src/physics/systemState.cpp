@@ -1,6 +1,5 @@
 #include "./systemState.hpp"
-#include <iostream>
-#include <mutex>
+#include <memory>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -9,24 +8,24 @@
 
 #define EPSILON 0.0001f
 
-PhysicsObject *SystemState::m_picked_object = nullptr;
+std::shared_ptr<PhysicsObject> SystemState::m_picked_object = nullptr;
 
 ThreadPool SystemState::sm_thread_pool = ThreadPool(5);
 std::mutex SystemState::sm_lock = std::mutex();
 
 Grid SystemState::sm_grid = Grid();
 
-std::vector<PhysicsObject *> SystemState::objects =
-    std::vector<PhysicsObject *>{};
+std::vector<std::shared_ptr<PhysicsObject>> SystemState::objects =
+    std::vector<std::shared_ptr<PhysicsObject>>{};
 
 uint32_t SystemState::GetObjectAmount() { return SystemState::objects.size(); }
 
-void SystemState::AddObject(PhysicsObject *object) {
+void SystemState::AddObject(std::shared_ptr<PhysicsObject> object) {
   SystemState::objects.push_back(object);
 }
 
 void SystemState::Draw() {
-  for (PhysicsObject *obj : SystemState::objects) {
+  for (auto obj : SystemState::objects) {
     obj->draw();
   }
 }
@@ -40,7 +39,7 @@ void SystemState::Update(float dt) {
 
   // sub steps will make us low frame rate resistant
   for (float i = 0; i < dt; i += sub_step) {
-    for (PhysicsObject *obj : SystemState::objects) {
+    for (auto obj : SystemState::objects) {
       // we dont apply gravity onto the object we pick up
       if (obj != SystemState::m_picked_object) {
         obj->applyForce(&gravity);
@@ -64,8 +63,9 @@ void SystemState::Update(float dt) {
   }
 }
 
-void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
-  for (auto obj_2 : cell.getObjects()) {
+void SystemState::ResolveCellCollisions(std::shared_ptr<PhysicsObject> obj,
+                                        GridCell& cell) {
+  for (std::shared_ptr<PhysicsObject> obj_2 : cell.getObjects()) {
     if (obj == obj_2) {
       continue;
     }
@@ -73,20 +73,19 @@ void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
     float distance = 0.0f;
 
     const bool has_collision = SystemState::CheckCircleCollision(
-        reinterpret_cast<CircleObject *>(obj),
-        reinterpret_cast<CircleObject *>(obj_2), distance);
+        std::dynamic_pointer_cast<CircleObject>(obj),
+        std::dynamic_pointer_cast<CircleObject>(obj_2), distance);
 
     if (has_collision) {
       SystemState::ResolveCircleCollision(
-          reinterpret_cast<CircleObject *>(obj),
-          reinterpret_cast<CircleObject *>(obj_2), distance);
+          std::dynamic_pointer_cast<CircleObject>(obj),
+          std::dynamic_pointer_cast<CircleObject>(obj_2), distance);
     }
   }
 }
 
-void SystemState::ResolveNeighborCellCollisions(PhysicsObject *obj,
-                                                uint32_t pos_x,
-                                                uint32_t pos_y) {
+void SystemState::ResolveNeighborCellCollisions(
+    std::shared_ptr<PhysicsObject> obj, uint32_t pos_x, uint32_t pos_y) {
   uint32_t width = SystemState::sm_grid.getWidth();
   uint32_t height = SystemState::sm_grid.getHeight();
 
@@ -176,8 +175,8 @@ void SystemState::ResolveCollisions() {
   // SystemState::ResolveSingleThreadedCollisions();
 }
 
-void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
-                                         PhysicsObject *obj_2,
+void SystemState::DistanceFromTwoObjects(std::shared_ptr<PhysicsObject> obj_1,
+                                         std::shared_ptr<PhysicsObject> obj_2,
                                          float& distance) {
   const float pos_1_x = obj_1->getPosition().x;
   const float pos_1_y = obj_1->getPosition().y;
@@ -188,9 +187,12 @@ void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
   distance = pow(pos_1_x - pos_2_x, 2) + pow(pos_1_y - pos_2_y, 2);
 }
 
-bool SystemState::CheckCircleCollision(CircleObject *circle_1,
-                                       CircleObject *circle_2,
+bool SystemState::CheckCircleCollision(std::shared_ptr<CircleObject> circle_1,
+                                       std::shared_ptr<CircleObject> circle_2,
                                        float& distance) {
+  if (circle_1 == nullptr || circle_2 == nullptr) {
+    return false;
+  }
   // x or y are both the same thing
   // since the radius is constant
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
@@ -200,14 +202,14 @@ bool SystemState::CheckCircleCollision(CircleObject *circle_1,
       pow(distance_from_center_1 + distance_from_center_2, 2);
 
   SystemState::DistanceFromTwoObjects(
-      reinterpret_cast<PhysicsObject *>(circle_1),
-      reinterpret_cast<PhysicsObject *>(circle_2), distance);
+      std::dynamic_pointer_cast<PhysicsObject>(circle_1),
+      std::dynamic_pointer_cast<PhysicsObject>(circle_2), distance);
 
   return min_distance > distance - EPSILON && distance > EPSILON;
 }
 
-void SystemState::ResolveCircleCollision(CircleObject *circle_1,
-                                         CircleObject *circle_2,
+void SystemState::ResolveCircleCollision(std::shared_ptr<CircleObject> circle_1,
+                                         std::shared_ptr<CircleObject> circle_2,
                                          float& distance) {
   const float distance_from_center_1 = circle_1->getDistanceFromCenter().x;
   const float distance_from_center_2 = circle_2->getDistanceFromCenter().x;
@@ -239,8 +241,10 @@ void SystemState::ResolveCircleCollision(CircleObject *circle_1,
   circle_2->setPosition(ImVec2(new_pos_2_x, new_pos_2_y));
 
   // do dynamic collisions when neither object is being held
-  if (SystemState::m_picked_object != (PhysicsObject *)circle_1 &&
-      SystemState::m_picked_object != (PhysicsObject *)circle_2) {
+  if (SystemState::m_picked_object !=
+          std::dynamic_pointer_cast<PhysicsObject>(circle_1) &&
+      SystemState::m_picked_object !=
+          std::dynamic_pointer_cast<PhysicsObject>(circle_2)) {
 
     // resolve velocity
     const ImVec2 circle_1_vec = circle_1->getVelocity();

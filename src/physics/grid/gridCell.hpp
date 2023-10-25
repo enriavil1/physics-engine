@@ -6,9 +6,12 @@
 
 class GridCell {
 private:
-  std::vector<PhysicsObject *> m_objects = std::vector<PhysicsObject *>{};
+  std::vector<std::shared_ptr<PhysicsObject>> m_objects =
+      std::vector<std::shared_ptr<PhysicsObject>>{};
 
 public:
-  std::vector<PhysicsObject *> getObjects() { return this->m_objects; }
-  void add(PhysicsObject *obj) { m_objects.push_back(obj); }
+  std::vector<std::shared_ptr<PhysicsObject>> getObjects() {
+    return this->m_objects;
+  }
+  void add(std::shared_ptr<PhysicsObject> obj) { m_objects.push_back(obj); }
 };

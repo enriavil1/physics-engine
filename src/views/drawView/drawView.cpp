@@ -23,7 +23,7 @@ void DrawView::handleRightClick() {
 
   auto add_circles = [io]() {
     auto mouse_pos = io.MousePos;
-    SystemState::AddObject(new CircleObject(
+    SystemState::AddObject(std::make_shared<CircleObject>(
         ViewObjectsConfig::GetMass(), mouse_pos.x, mouse_pos.y,
         ViewObjectsConfig::GetRadius(), ViewObjectsConfig::GetColor()));
   };

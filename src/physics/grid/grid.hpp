@@ -74,14 +74,13 @@ public:
     return this->m_cells[id];
   }
 
-  GridCell& getCell(PhysicsObject *obj) {
+  GridCell& getCell(std::shared_ptr<PhysicsObject> obj) {
     std::lock_guard<std::mutex> lock_guard(this->m_lock);
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
     return this->m_cells[id];
   }
 
-  void add(PhysicsObject *obj) {
-    std::lock_guard<std::mutex> lock_guard(this->m_lock);
+  void add(std::shared_ptr<PhysicsObject> obj) {
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
     this->m_cells[id].add(obj);
   }

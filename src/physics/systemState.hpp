@@ -3,6 +3,7 @@
 #include <_types/_uint32_t.h>
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <vector>
 
 #include "physics_objects/circleObject.hpp"
@@ -15,34 +16,38 @@
 
 class SystemState {
 private:
-  static PhysicsObject *m_picked_object;
+  static std::shared_ptr<PhysicsObject> m_picked_object;
 
   static ThreadPool sm_thread_pool;
   static std::mutex sm_lock;
 
   static Grid sm_grid;
 
-  static std::vector<PhysicsObject *> objects;
+  static std::vector<std::shared_ptr<PhysicsObject>> objects;
 
-  static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
+  static void DistanceFromTwoObjects(std::shared_ptr<PhysicsObject> obj_1,
+                                     std::shared_ptr<PhysicsObject> obj_2,
                                      float& distance);
 
   // Circle object specific
-  static bool CheckCircleCollision(CircleObject *circle_1,
-                                   CircleObject *circle_2, float& distance);
-  static void ResolveCircleCollision(CircleObject *circle_1,
-                                     CircleObject *circle_2, float& distance);
+  static bool CheckCircleCollision(std::shared_ptr<CircleObject> circle_1,
+                                   std::shared_ptr<CircleObject> circle_2,
+                                   float& distance);
+  static void ResolveCircleCollision(std::shared_ptr<CircleObject> circle_1,
+                                     std::shared_ptr<CircleObject> circle_2,
+                                     float& distance);
 
-  static void ResolveCellCollisions(PhysicsObject *obj, GridCell& cell);
-  static void ResolveNeighborCellCollisions(PhysicsObject *obj, uint32_t pos_x,
-                                            uint32_t pos_y);
+  static void ResolveCellCollisions(std::shared_ptr<PhysicsObject> obj,
+                                    GridCell& cell);
+  static void ResolveNeighborCellCollisions(std::shared_ptr<PhysicsObject> obj,
+                                            uint32_t pos_x, uint32_t pos_y);
 
   static void ResolveMultiThreadedCollisions();
   static void ResolveSingleThreadedCollisions();
 
 public:
   static uint32_t GetObjectAmount();
-  static void AddObject(PhysicsObject *object);
+  static void AddObject(std::shared_ptr<PhysicsObject> object);
 
   static void Draw();
   static void Update(float dt);
@@ -55,7 +60,7 @@ public:
 
   static void SetPickedObject(const float& mouse_pos_x,
                               const float& mouse_pos_y) {
-    for (PhysicsObject *obj : SystemState::objects) {
+    for (std::shared_ptr<PhysicsObject> obj : SystemState::objects) {
       const ImVec2 obj_pos = obj->getPosition();
       const ImVec2 distance_from_center = obj->getDistanceFromCenter();
 
