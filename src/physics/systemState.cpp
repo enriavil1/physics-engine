@@ -1,5 +1,6 @@
 #include "./systemState.hpp"
 #include <iostream>
+#include <mutex>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -11,6 +12,7 @@
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
 ThreadPool SystemState::sm_thread_pool = ThreadPool(5);
+std::mutex SystemState::sm_lock = std::mutex();
 
 Grid SystemState::sm_grid = Grid();
 
@@ -51,7 +53,8 @@ void SystemState::Update(float dt) {
     }
 
     SystemState::sm_grid.clear();
-    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
+    SystemState::sm_grid.updateCellWidthAndHeight(max_width * 2,
+                                                  max_height * 2);
     for (const auto obj : SystemState::objects) {
       SystemState::sm_grid.add(obj);
     }
@@ -63,7 +66,6 @@ void SystemState::Update(float dt) {
 
 void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
   for (auto obj_2 : cell.getObjects()) {
-
     if (obj == obj_2) {
       continue;
     }

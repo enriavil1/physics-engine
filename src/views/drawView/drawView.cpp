@@ -1,4 +1,5 @@
 #include "./drawView.hpp"
+#include "imgui.h"
 
 ImGuiWindowFlags DrawView::s_window_flags = ImGuiWindowFlags_NoCollapse;
 
@@ -39,6 +40,8 @@ void DrawView::render(const float& dt) {
 
   const auto view_port_size = ImGui::GetMainViewport()->WorkSize;
   ImGui::Begin("Draw View", NULL, DrawView::s_window_flags);
+  SystemState::UpdateWindowSpecs(
+      ImGui::GetWindowWidth(), ImGui::GetWindowHeight(), ImGui::GetWindowPos());
 
   handleLeftClick();
   handleRightClick();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <_types/_uint32_t.h>
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -17,6 +18,7 @@ private:
   static PhysicsObject *m_picked_object;
 
   static ThreadPool sm_thread_pool;
+  static std::mutex sm_lock;
 
   static Grid sm_grid;
 
@@ -46,6 +48,10 @@ public:
   static void Update(float dt);
 
   static void ResolveCollisions();
+
+  static void UpdateWindowSpecs(uint32_t width, uint32_t height, ImVec2 pos) {
+    SystemState::sm_grid.updateWindowSpecs(width, height, pos);
+  }
 
   static void SetPickedObject(const float& mouse_pos_x,
                               const float& mouse_pos_y) {
