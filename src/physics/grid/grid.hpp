@@ -32,7 +32,6 @@ public:
   }
 
   void updateCellWidthAndHeight(uint32_t width, uint32_t height) {
-    std::lock_guard<std::mutex> lock_guard(this->m_lock);
     this->m_width = width;
     this->m_height = height;
   }

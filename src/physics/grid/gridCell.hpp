@@ -16,8 +16,5 @@ public:
   std::vector<std::shared_ptr<PhysicsObject>>& getObjects() {
     return this->m_objects;
   }
-  void add(std::shared_ptr<PhysicsObject> obj) {
-    std::lock_guard<std::mutex> lock_guard(this->m_lock);
-    m_objects.push_back(obj);
-  }
+  void add(std::shared_ptr<PhysicsObject> obj) { m_objects.push_back(obj); }
 };

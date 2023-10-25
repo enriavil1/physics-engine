@@ -1,4 +1,5 @@
 #include "./systemState.hpp"
+#include <stdint.h>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -9,7 +10,7 @@
 
 std::shared_ptr<PhysicsObject> SystemState::m_picked_object = nullptr;
 
-ThreadPool SystemState::sm_thread_pool = ThreadPool(5);
+ThreadPool SystemState::sm_thread_pool = ThreadPool(8);
 
 Grid SystemState::sm_grid = Grid();
 
@@ -123,38 +124,30 @@ void SystemState::ResolveNeighborCellCollisions(
 }
 
 void SystemState::ResolveMultiThreadedCollisions() {
+  const uint32_t thread_count = SystemState::sm_thread_pool.getThreadCount();
   const uint32_t slice_size =
       std::max(static_cast<int>(SystemState::objects.size() /
                                 SystemState::sm_thread_pool.getThreadCount()),
                1);
 
-  for (uint32_t i = 0; i < SystemState::objects.size() / 2; i += slice_size) {
-    SystemState::sm_thread_pool.addTask([i, slice_size]() {
-      for (uint32_t pos = i;
-           pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
-        auto obj = SystemState::objects[pos];
-        uint32_t pos_x = obj->getPosition().x;
-        uint32_t pos_y = obj->getPosition().y;
+  uint32_t start = 0;
 
-        SystemState::ResolveNeighborCellCollisions(obj, pos_x, pos_y);
-      }
-    });
-  }
+  for (uint32_t thread_id = 1; thread_id <= thread_count; thread_id++) {
+    const uint32_t end = slice_size * thread_id;
 
-  SystemState::sm_thread_pool.waitForCompletion();
+    SystemState::sm_thread_pool.addTask(
+        [start, end, thread_id, slice_size, thread_count]() {
+          for (uint32_t pos = start;
+               pos < end && pos < SystemState::objects.size(); ++pos) {
+            auto obj = SystemState::objects[pos];
+            uint32_t pos_x = obj->getPosition().x;
+            uint32_t pos_y = obj->getPosition().y;
 
-  for (uint32_t i = SystemState::objects.size() / 2;
-       i < SystemState::objects.size(); i += slice_size) {
-    SystemState::sm_thread_pool.addTask([i, slice_size]() {
-      for (uint32_t pos = i;
-           pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
-        auto obj = SystemState::objects[pos];
-        uint32_t pos_x = obj->getPosition().x;
-        uint32_t pos_y = obj->getPosition().y;
+            SystemState::ResolveNeighborCellCollisions(obj, pos_x, pos_y);
+          }
+        });
 
-        SystemState::ResolveNeighborCellCollisions(obj, pos_x, pos_y);
-      }
-    });
+    start = end;
   }
 
   SystemState::sm_thread_pool.waitForCompletion();
