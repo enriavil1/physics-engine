@@ -1,0 +1,15 @@
+/build
+/debug
+
+perf.data*
+.idea
+.vscode
+.cache
+.vs
+*.code-workspace
+*.hrd
+*.stdout
+
+results/
+
+imgui.ini
