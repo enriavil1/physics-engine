@@ -49,16 +49,16 @@ void SystemState::Update(float dt) {
       max_width = std::max(max_width, obj->getDistanceFromCenter().x);
       max_height = std::max(max_height, obj->getDistanceFromCenter().y);
     }
-  }
 
-  SystemState::sm_grid.clear();
-  SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
-  for (const auto obj : SystemState::objects) {
-    SystemState::sm_grid.add(obj);
-  }
+    SystemState::sm_grid.clear();
+    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
+    for (const auto obj : SystemState::objects) {
+      SystemState::sm_grid.add(obj);
+    }
 
-  SystemState::ResolveCollisions();
-  SystemState::Draw();
+    SystemState::ResolveCollisions();
+    SystemState::Draw();
+  }
 }
 
 void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
@@ -123,27 +123,21 @@ void SystemState::ResolveNeighborCollisions(PhysicsObject *obj) {
 }
 
 void SystemState::ResolveMultiThreadCollisions() {
-  const uint32_t thread_count =
-      SystemState::sm_thread_pool.getThreadCount() + 1;
+  const uint32_t thread_count = SystemState::sm_thread_pool.getThreadCount();
   const uint32_t slice_size =
       std::max(static_cast<int>(SystemState::objects.size()) /
                    static_cast<int>(thread_count),
                1);
 
-  uint32_t start = 0;
+  for (uint32_t i = 0; i < SystemState::objects.size(); i += slice_size) {
+    SystemState::sm_thread_pool.addTask([i, slice_size]() {
+      for (uint32_t pos = i;
+           pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
+        auto obj = SystemState::objects[pos];
 
-  for (uint32_t thread_id = 1; thread_id < thread_count; ++thread_id) {
-    uint32_t end = std::min(static_cast<int>(thread_id * slice_size),
-                            static_cast<int>(SystemState::objects.size()));
-    SystemState::sm_thread_pool.addTask([start, end]() {
-      for (uint32_t i = start; i < end; ++i) {
-        const auto obj = SystemState::objects[i];
-        SystemState::ResolveCellCollisions(obj,
-                                           SystemState::sm_grid.getCell(obj));
         SystemState::ResolveNeighborCollisions(obj);
       }
     });
-    start = end;
   }
 
   SystemState::sm_thread_pool.waitForCompletion();
