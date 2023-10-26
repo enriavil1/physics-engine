@@ -34,11 +34,13 @@ endif()
 if(BUILD_SDL)
   message(STATUS "[${PROJECT_NAME}] Adding SDL3")
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SDL)
+  target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3)
 endif()
 
 if(BUILD_THREADS)
   message(STATUS "[${PROJECT_NAME}] Adding ThreadPool")
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/thread_pool)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ThreadPool)
 endif()
 
 if(BUILD_IMGUI)

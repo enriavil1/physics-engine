@@ -1,5 +1,6 @@
 #include "./systemState.hpp"
 #include "physics_objects/physicsObject.hpp"
+#include <iostream>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -10,10 +11,10 @@
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
-Grid SystemState::sm_grid = Grid();
+ThreadPool SystemState::sm_thread_pool{5};
 
-std::vector<PhysicsObject *> SystemState::objects =
-    std::vector<PhysicsObject *>{};
+Grid SystemState::sm_grid;
+std::vector<PhysicsObject *> SystemState::objects;
 
 uint32_t SystemState::GetObjectAmount() { return SystemState::objects.size(); }
 
@@ -48,16 +49,16 @@ void SystemState::Update(float dt) {
       max_width = std::max(max_width, obj->getDistanceFromCenter().x);
       max_height = std::max(max_height, obj->getDistanceFromCenter().y);
     }
-
-    SystemState::sm_grid.clear();
-    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
-    for (const auto obj : SystemState::objects) {
-      SystemState::sm_grid.add(obj);
-    }
-    // every sub step we should resolve collisions of all balls and update draw
-    SystemState::ResolveCollisions();
-    SystemState::Draw();
   }
+
+  SystemState::sm_grid.clear();
+  SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
+  for (const auto obj : SystemState::objects) {
+    SystemState::sm_grid.add(obj);
+  }
+
+  SystemState::ResolveCollisions();
+  SystemState::Draw();
 }
 
 void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
@@ -121,6 +122,33 @@ void SystemState::ResolveNeighborCollisions(PhysicsObject *obj) {
       obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
 }
 
+void SystemState::ResolveMultiThreadCollisions() {
+  const uint32_t thread_count =
+      SystemState::sm_thread_pool.getThreadCount() + 1;
+  const uint32_t slice_size =
+      std::max(static_cast<int>(SystemState::objects.size()) /
+                   static_cast<int>(thread_count),
+               1);
+
+  uint32_t start = 0;
+
+  for (uint32_t thread_id = 1; thread_id < thread_count; ++thread_id) {
+    uint32_t end = std::min(static_cast<int>(thread_id * slice_size),
+                            static_cast<int>(SystemState::objects.size()));
+    SystemState::sm_thread_pool.addTask([start, end]() {
+      for (uint32_t i = start; i < end; ++i) {
+        const auto obj = SystemState::objects[i];
+        SystemState::ResolveCellCollisions(obj,
+                                           SystemState::sm_grid.getCell(obj));
+        SystemState::ResolveNeighborCollisions(obj);
+      }
+    });
+    start = end;
+  }
+
+  SystemState::sm_thread_pool.waitForCompletion();
+}
+
 void SystemState::ResolveSingleThreadCollisions() {
   for (auto obj : SystemState::objects) {
     SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
@@ -128,7 +156,10 @@ void SystemState::ResolveSingleThreadCollisions() {
   }
 }
 
-void SystemState::ResolveCollisions() { ResolveSingleThreadCollisions(); }
+void SystemState::ResolveCollisions() {
+  ResolveMultiThreadCollisions();
+  // ResolveSingleThreadCollisions();
+}
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
                                          PhysicsObject *obj_2,
