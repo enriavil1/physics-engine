@@ -147,8 +147,8 @@ void SystemState::ResolveSingleThreadCollisions() {
 }
 
 void SystemState::ResolveCollisions() {
-  // ResolveMultiThreadCollisions();
-  ResolveSingleThreadCollisions();
+  ResolveMultiThreadCollisions();
+  // ResolveSingleThreadCollisions();
 }
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
