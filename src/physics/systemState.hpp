@@ -13,24 +13,32 @@
 #include "grid/grid.hpp"
 #include "grid/gridCell.hpp"
 
+#include "../thread_pool/threadPool.hpp"
+
 class SystemState {
 private:
   static PhysicsObject *m_picked_object;
 
   static Grid sm_grid;
+  static ThreadPool sm_thread_pool;
 
   static std::vector<PhysicsObject *> objects;
 
   static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
                                      float& distance);
 
+  // dealing with different amount of threads and collisions
+  static void ResolveSingleThreadCollisions();
+  static void ResolveMultiThreadCollisions();
+
+  static void ResolveNeighborCollisions(PhysicsObject *obj);
+  static void ResolveCellCollisions(PhysicsObject *obj, GridCell& cell);
+
   // Circle object specific
   static bool CheckCircleCollision(CircleObject *circle_1,
                                    CircleObject *circle_2, float& distance);
   static void ResolveCircleCollision(CircleObject *circle_1,
                                      CircleObject *circle_2, float& distance);
-
-  static void ResolveCellCollisions(PhysicsObject *obj, GridCell& cell);
 
 public:
   static uint32_t GetObjectAmount();

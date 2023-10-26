@@ -1,4 +1,5 @@
 #include "./systemState.hpp"
+#include "physics_objects/physicsObject.hpp"
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -80,50 +81,54 @@ void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
   }
 }
 
-void SystemState::ResolveCollisions() {
+void SystemState::ResolveNeighborCollisions(PhysicsObject *obj) {
+  uint32_t pos_x = obj->getPosition().x;
+  uint32_t pos_y = obj->getPosition().y;
+
+  uint32_t width = SystemState::sm_grid.getWidth();
+  uint32_t height = SystemState::sm_grid.getHeight();
+
+  // check left
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
+
+  // check above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
+
+  // check right
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
+
+  // check below
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
+
+  // check right and above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
+
+  // check left and above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
+
+  // check below and right
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
+
+  // check below and left
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
+}
+
+void SystemState::ResolveSingleThreadCollisions() {
   for (auto obj : SystemState::objects) {
-
-    uint32_t pos_x = obj->getPosition().x;
-    uint32_t pos_y = obj->getPosition().y;
-
-    uint32_t width = SystemState::sm_grid.getWidth();
-    uint32_t height = SystemState::sm_grid.getHeight();
-
     SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
-
-    // check left
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
-
-    // check above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
-
-    // check right
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
-
-    // check below
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
-
-    // check right and above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
-
-    // check left and above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
-
-    // check below and right
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
-
-    // check below and left
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
+    SystemState::ResolveNeighborCollisions(obj);
   }
 }
+
+void SystemState::ResolveCollisions() { ResolveSingleThreadCollisions(); }
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,
                                          PhysicsObject *obj_2,
