@@ -1,17 +1,14 @@
 #include "./systemState.hpp"
 #include "physics_objects/physicsObject.hpp"
-#include <iostream>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
-
-#define SUB_STEP_DIVISION 8.0f
 
 #define EPSILON 0.0001f
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
-ThreadPool SystemState::sm_thread_pool{5};
+ThreadPool SystemState::sm_thread_pool{std::thread::hardware_concurrency()};
 
 Grid SystemState::sm_grid;
 std::vector<PhysicsObject *> SystemState::objects;
@@ -31,34 +28,31 @@ void SystemState::Draw() {
 void SystemState::Update(float dt) {
   Gravity gravity;
 
-  const float sub_step = dt / SUB_STEP_DIVISION;
-
   float max_width = MINIMUM_CELL_WIDTH;
   float max_height = MINIMUM_CELL_HEIGHT;
 
   // sub steps will make us low frame rate resistant
-  for (float i = 0; i < dt; i += sub_step) {
-    for (PhysicsObject *obj : SystemState::objects) {
-      // we dont apply gravity onto the object we pick up
-      if (obj != SystemState::m_picked_object) {
-        obj->applyForce(&gravity);
-      }
-      obj->update(sub_step);
-      obj->constraint(obj->getPosition());
-
-      max_width = std::max(max_width, obj->getDistanceFromCenter().x);
-      max_height = std::max(max_height, obj->getDistanceFromCenter().y);
+  for (PhysicsObject *obj : SystemState::objects) {
+    // we dont apply gravity onto the object we pick up
+    if (obj != SystemState::m_picked_object) {
+      obj->applyForce(&gravity);
     }
+    obj->update(dt);
+    obj->constraint(obj->getPosition());
 
-    SystemState::sm_grid.clear();
-    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
-    for (const auto obj : SystemState::objects) {
-      SystemState::sm_grid.add(obj);
-    }
-
-    SystemState::ResolveCollisions();
-    SystemState::Draw();
+    max_width = std::max(max_width, obj->getDistanceFromCenter().x);
+    max_height = std::max(max_height, obj->getDistanceFromCenter().y);
   }
+
+  SystemState::sm_grid.clear();
+  SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
+  for (const auto obj : SystemState::objects) {
+    SystemState::sm_grid.add(obj);
+  }
+
+  SystemState::ResolveCollisions();
+
+  SystemState::Draw();
 }
 
 void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
@@ -135,6 +129,8 @@ void SystemState::ResolveMultiThreadCollisions() {
            pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
         auto obj = SystemState::objects[pos];
 
+        SystemState::ResolveCellCollisions(obj,
+                                           SystemState::sm_grid.getCell(obj));
         SystemState::ResolveNeighborCollisions(obj);
       }
     });
@@ -151,8 +147,8 @@ void SystemState::ResolveSingleThreadCollisions() {
 }
 
 void SystemState::ResolveCollisions() {
-  ResolveMultiThreadCollisions();
-  // ResolveSingleThreadCollisions();
+  // ResolveMultiThreadCollisions();
+  ResolveSingleThreadCollisions();
 }
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,

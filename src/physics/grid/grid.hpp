@@ -52,10 +52,7 @@ public:
     return row * amount_of_columns + column;
   }
 
-  GridCell& getCell(uint32_t id) {
-    std::lock_guard<std::mutex> lock_guard{this->m_lock};
-    return this->m_cells[id];
-  }
+  GridCell& getCell(uint32_t id) { return this->m_cells[id]; }
 
   GridCell& getCell(uint32_t pos_x, uint32_t pos_y) {
     std::lock_guard<std::mutex> lock_guard{this->m_lock};

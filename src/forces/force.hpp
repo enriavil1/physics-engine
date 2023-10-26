@@ -5,7 +5,7 @@
 #include "../../imgui/imgui.h"
 
 namespace ForceConstants {
-const uint32_t PIXELS_PER_METER = 20;
+const uint32_t PIXELS_PER_METER = 5;
 const float EPSILON = 0.000001f;
 } // namespace ForceConstants
 

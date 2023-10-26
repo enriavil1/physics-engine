@@ -1,5 +1,3 @@
-#include <chrono>
-
 #include "imgui/imgui.h"
 
 #include "src/physics/systemState.hpp"
@@ -8,6 +6,8 @@
 #include "src/views/ViewStats.hpp"
 #include "src/views/drawView/drawView.hpp"
 #include "src/views/main/MainView.hpp"
+
+#define SUB_STEP 8.0f
 
 int main() {
   // this is mac versioning add other versions
@@ -25,9 +25,7 @@ int main() {
 
   auto& io = ImGui::GetIO();
 
-  const float dt = 1.0f / io.Framerate;
-
-  auto start = std::chrono::system_clock::now();
+  const float fps_cap = 60.0f;
 
   while (main_view.getIsRunning()) {
     main_view.processEvent();
@@ -37,17 +35,10 @@ int main() {
     stats_modal.render();
     object_config_modal.render();
 
-    const auto current = std::chrono::system_clock::now();
-    const std::chrono::duration<double> duration = current - start;
+    const double frame_rate = io.Framerate >= fps_cap ? fps_cap : io.Framerate;
+    float dt = 1 / (frame_rate * SUB_STEP);
 
-    start = current;
-    float frame_time = duration.count();
-
-    while (frame_time > 0.0f) {
-      const float time_step = std::min(frame_time, dt);
-      draw_view.render(time_step);
-      frame_time -= dt;
-    }
+    draw_view.render(dt);
 
     main_view.render();
   }
