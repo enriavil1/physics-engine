@@ -1,5 +1,4 @@
 #include "./systemState.hpp"
-#include "physics_objects/physicsObject.hpp"
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
@@ -25,24 +24,57 @@ void SystemState::Draw() {
   }
 }
 
+void SystemState::ApplyObjectUpdate(PhysicsObject *obj, float dt,
+                                    float& max_width, float& max_height) {
+  Gravity gravity;
+
+  // we dont apply gravity onto the object we pick up
+  if (obj != SystemState::m_picked_object) {
+    obj->applyForce(&gravity);
+  }
+  obj->update(dt);
+  obj->constraint(obj->getPosition());
+
+  max_width = std::max(max_width, obj->getDistanceFromCenter().x);
+  max_height = std::max(max_height, obj->getDistanceFromCenter().y);
+}
+
+void SystemState::MultiThreadUpdate(float dt, float& max_width,
+                                    float& max_height) {
+  const uint32_t thread_count = SystemState::sm_thread_pool.getThreadCount();
+  const uint32_t slice_size =
+      std::max(static_cast<int>(SystemState::objects.size() / thread_count), 1);
+
+  for (uint32_t i = 0; i < SystemState::objects.size(); i += slice_size) {
+    SystemState::sm_thread_pool.addTask([i, slice_size, &max_width, &max_height,
+                                         dt]() {
+      for (uint32_t pos = i;
+           pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
+        auto obj = SystemState::objects[pos];
+
+        SystemState::ApplyObjectUpdate(obj, dt, max_width, max_height);
+      }
+    });
+  }
+
+  SystemState::sm_thread_pool.waitForCompletion();
+}
+
+void SystemState::SingleThreadUpdate(float dt, float& max_width,
+                                     float& max_height) {
+  for (PhysicsObject *obj : SystemState::objects) {
+    SystemState::ApplyObjectUpdate(obj, dt, max_width, max_height);
+  }
+}
+
 void SystemState::Update(float dt) {
   Gravity gravity;
 
   float max_width = MINIMUM_CELL_WIDTH;
   float max_height = MINIMUM_CELL_HEIGHT;
 
-  // sub steps will make us low frame rate resistant
-  for (PhysicsObject *obj : SystemState::objects) {
-    // we dont apply gravity onto the object we pick up
-    if (obj != SystemState::m_picked_object) {
-      obj->applyForce(&gravity);
-    }
-    obj->update(dt);
-    obj->constraint(obj->getPosition());
-
-    max_width = std::max(max_width, obj->getDistanceFromCenter().x);
-    max_height = std::max(max_height, obj->getDistanceFromCenter().y);
-  }
+  SystemState::MultiThreadUpdate(dt, max_width, max_height);
+  // SystemState::SingleThreadUpdate(dt, max_width, max_height);
 
   SystemState::sm_grid.clear();
   SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);

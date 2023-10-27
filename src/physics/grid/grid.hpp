@@ -20,6 +20,8 @@ private:
   std::unordered_map<uint32_t, GridCell> m_cells =
       std::unordered_map<uint32_t, GridCell>{};
 
+  GridCell m_empty_cell;
+
 public:
   void clear() {
     std::lock_guard<std::mutex> lock_guard{this->m_lock};
@@ -55,14 +57,18 @@ public:
   GridCell& getCell(uint32_t id) { return this->m_cells[id]; }
 
   GridCell& getCell(uint32_t pos_x, uint32_t pos_y) {
-    std::lock_guard<std::mutex> lock_guard{this->m_lock};
     const uint32_t id = getCellID(pos_x, pos_y);
+    if (this->m_cells.find(id) == this->m_cells.end()) {
+      return this->m_empty_cell;
+    }
     return this->m_cells[id];
   }
 
   GridCell& getCell(PhysicsObject *obj) {
-    std::lock_guard<std::mutex> lock_guard{this->m_lock};
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
+    if (this->m_cells.find(id) == this->m_cells.end()) {
+      return this->m_empty_cell;
+    }
     return this->m_cells[id];
   }
 
