@@ -1,5 +1,4 @@
 #include "./systemState.hpp"
-#include <_types/_uint32_t.h>
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
