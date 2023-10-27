@@ -24,6 +24,11 @@ private:
 
   static std::vector<PhysicsObject *> objects;
 
+  static void MultiThreadUpdate(float dt, float& max_width, float& max_height);
+  static void SingleThreadUpdate(float dt, float& max_width, float& max_height);
+  static void ApplyObjectUpdate(PhysicsObject *obj, float dt, float& max_width,
+                                float& max_height);
+
   static void DistanceFromTwoObjects(PhysicsObject *obj_1, PhysicsObject *obj_2,
                                      float& distance);
 
