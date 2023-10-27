@@ -1,20 +1,17 @@
 #include "./systemState.hpp"
-#include "grid/gridCell.hpp"
-#include <algorithm>
+#include "physics_objects/physicsObject.hpp"
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2
-
-#define SUB_STEP_DIVISION 8.0f
 
 #define EPSILON 0.0001f
 
 PhysicsObject *SystemState::m_picked_object = nullptr;
 
-Grid SystemState::sm_grid = Grid();
+ThreadPool SystemState::sm_thread_pool{std::thread::hardware_concurrency()};
 
-std::vector<PhysicsObject *> SystemState::objects =
-    std::vector<PhysicsObject *>{};
+Grid SystemState::sm_grid;
+std::vector<PhysicsObject *> SystemState::objects;
 
 uint32_t SystemState::GetObjectAmount() { return SystemState::objects.size(); }
 
@@ -31,34 +28,31 @@ void SystemState::Draw() {
 void SystemState::Update(float dt) {
   Gravity gravity;
 
-  const float sub_step = dt / SUB_STEP_DIVISION;
-
   float max_width = MINIMUM_CELL_WIDTH;
   float max_height = MINIMUM_CELL_HEIGHT;
 
   // sub steps will make us low frame rate resistant
-  for (float i = 0; i < dt; i += sub_step) {
-    for (PhysicsObject *obj : SystemState::objects) {
-      // we dont apply gravity onto the object we pick up
-      if (obj != SystemState::m_picked_object) {
-        obj->applyForce(&gravity);
-      }
-      obj->update(sub_step);
-      obj->constraint(obj->getPosition());
-
-      max_width = std::max(max_width, obj->getDistanceFromCenter().x);
-      max_height = std::max(max_height, obj->getDistanceFromCenter().y);
+  for (PhysicsObject *obj : SystemState::objects) {
+    // we dont apply gravity onto the object we pick up
+    if (obj != SystemState::m_picked_object) {
+      obj->applyForce(&gravity);
     }
+    obj->update(dt);
+    obj->constraint(obj->getPosition());
 
-    SystemState::sm_grid.clear();
-    SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
-    for (const auto obj : SystemState::objects) {
-      SystemState::sm_grid.add(obj);
-    }
-    // every sub step we should resolve collisions of all balls and update draw
-    SystemState::ResolveCollisions();
-    SystemState::Draw();
+    max_width = std::max(max_width, obj->getDistanceFromCenter().x);
+    max_height = std::max(max_height, obj->getDistanceFromCenter().y);
   }
+
+  SystemState::sm_grid.clear();
+  SystemState::sm_grid.updateWidthAndHeight(max_width * 2, max_height * 2);
+  for (const auto obj : SystemState::objects) {
+    SystemState::sm_grid.add(obj);
+  }
+
+  SystemState::ResolveCollisions();
+
+  SystemState::Draw();
 }
 
 void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
@@ -82,49 +76,79 @@ void SystemState::ResolveCellCollisions(PhysicsObject *obj, GridCell& cell) {
   }
 }
 
-void SystemState::ResolveCollisions() {
-  for (auto obj : SystemState::objects) {
+void SystemState::ResolveNeighborCollisions(PhysicsObject *obj) {
+  uint32_t pos_x = obj->getPosition().x;
+  uint32_t pos_y = obj->getPosition().y;
 
-    uint32_t pos_x = obj->getPosition().x;
-    uint32_t pos_y = obj->getPosition().y;
+  uint32_t width = SystemState::sm_grid.getWidth();
+  uint32_t height = SystemState::sm_grid.getHeight();
 
-    uint32_t width = SystemState::sm_grid.getWidth();
-    uint32_t height = SystemState::sm_grid.getHeight();
+  // check left
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
 
-    SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
+  // check above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
 
-    // check left
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y));
+  // check right
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
 
-    // check above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y - height));
+  // check below
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
 
-    // check right
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y));
+  // check right and above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
 
-    // check below
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x, pos_y + height));
+  // check left and above
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
 
-    // check right and above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y - height));
+  // check below and right
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
 
-    // check left and above
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y - height));
+  // check below and left
+  SystemState::ResolveCellCollisions(
+      obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
+}
 
-    // check below and right
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x + width, pos_y + height));
+void SystemState::ResolveMultiThreadCollisions() {
+  const uint32_t thread_count = SystemState::sm_thread_pool.getThreadCount();
+  const uint32_t slice_size =
+      std::max(static_cast<int>(SystemState::objects.size()) /
+                   static_cast<int>(thread_count),
+               1);
 
-    // check below and left
-    SystemState::ResolveCellCollisions(
-        obj, SystemState::sm_grid.getCell(pos_x - width, pos_y + height));
+  for (uint32_t i = 0; i < SystemState::objects.size(); i += slice_size) {
+    SystemState::sm_thread_pool.addTask([i, slice_size]() {
+      for (uint32_t pos = i;
+           pos < i + slice_size && pos < SystemState::objects.size(); ++pos) {
+        auto obj = SystemState::objects[pos];
+
+        SystemState::ResolveCellCollisions(obj,
+                                           SystemState::sm_grid.getCell(obj));
+        SystemState::ResolveNeighborCollisions(obj);
+      }
+    });
   }
+
+  SystemState::sm_thread_pool.waitForCompletion();
+}
+
+void SystemState::ResolveSingleThreadCollisions() {
+  for (auto obj : SystemState::objects) {
+    SystemState::ResolveCellCollisions(obj, SystemState::sm_grid.getCell(obj));
+    SystemState::ResolveNeighborCollisions(obj);
+  }
+}
+
+void SystemState::ResolveCollisions() {
+  ResolveMultiThreadCollisions();
+  // ResolveSingleThreadCollisions();
 }
 
 void SystemState::DistanceFromTwoObjects(PhysicsObject *obj_1,

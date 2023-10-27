@@ -1,12 +1,13 @@
 #pragma once
 
+#include <mutex>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "./gridCell.hpp"
 
-#include "../physicsObjects/physicsObject.hpp"
+#include "../physics_objects/physicsObject.hpp"
 
 class Grid {
 private:
@@ -14,11 +15,16 @@ private:
   uint32_t m_width = 20;
   uint32_t m_height = 20;
 
+  std::mutex m_lock;
+
   std::unordered_map<uint32_t, GridCell> m_cells =
       std::unordered_map<uint32_t, GridCell>{};
 
 public:
-  void clear() { this->m_cells = std::unordered_map<uint32_t, GridCell>{}; }
+  void clear() {
+    std::lock_guard<std::mutex> lock_guard{this->m_lock};
+    this->m_cells = std::unordered_map<uint32_t, GridCell>{};
+  }
 
   void updateWidthAndHeight(uint32_t width, uint32_t height) {
     this->m_width = width;
@@ -49,11 +55,13 @@ public:
   GridCell& getCell(uint32_t id) { return this->m_cells[id]; }
 
   GridCell& getCell(uint32_t pos_x, uint32_t pos_y) {
+    std::lock_guard<std::mutex> lock_guard{this->m_lock};
     const uint32_t id = getCellID(pos_x, pos_y);
     return this->m_cells[id];
   }
 
   GridCell& getCell(PhysicsObject *obj) {
+    std::lock_guard<std::mutex> lock_guard{this->m_lock};
     const uint32_t id = getCellID(obj->getPosition().x, obj->getPosition().y);
     return this->m_cells[id];
   }

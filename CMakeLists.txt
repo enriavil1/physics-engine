@@ -13,6 +13,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 option(BUILD_SDL "Build with SDL support" ON)
 option(BUILD_IMGUI "Build with ImGui support" ON)
 option(BUILD_OPENGL "Build with OpenGL support" ON)
+option(BUILD_THREADS "Build with Multi thread support" ON)
 
 # Check the operating system setup
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -33,6 +34,13 @@ endif()
 if(BUILD_SDL)
   message(STATUS "[${PROJECT_NAME}] Adding SDL3")
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/SDL)
+  target_link_libraries(${PROJECT_NAME} PUBLIC SDL3::SDL3)
+endif()
+
+if(BUILD_THREADS)
+  message(STATUS "[${PROJECT_NAME}] Adding ThreadPool")
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/thread_pool)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ThreadPool)
 endif()
 
 if(BUILD_IMGUI)
