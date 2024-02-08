@@ -4,7 +4,6 @@
 #include "./circleObject.hpp"
 
 ImVec2 CircleObject::getDistanceFromCenter() const {
-  // radius + thickness of line
   return ImVec2(this->radius, this->radius);
 }
 

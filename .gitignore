@@ -1,6 +1,8 @@
 /build
 /debug
 
+CMakeCache.txt
+
 perf.data*
 .idea
 .vscode
