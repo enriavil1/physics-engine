@@ -1,10 +1,10 @@
-#include "./ViewStats.hpp"
-#include "../physics/systemState.hpp"
+#include "../../include/views/ViewStats.hpp"
+#include "../../include/physics/systemState.hpp"
 
 ImGuiWindowFlags ViewStats::window_flags = ImGuiWindowFlags_AlwaysAutoResize;
 
 void ViewStats::render() {
-  auto &io = ImGui::GetIO();
+  auto& io = ImGui::GetIO();
   (void)io;
 
   ImGui::Begin("Stats", NULL, ViewStats::window_flags);

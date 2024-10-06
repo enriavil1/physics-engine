@@ -1,4 +1,4 @@
-#include "./drawView.hpp"
+#include "../../../include/views/draw_view/drawView.hpp"
 
 ImGuiWindowFlags DrawView::s_window_flags = ImGuiWindowFlags_NoCollapse;
 

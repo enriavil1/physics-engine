@@ -1,4 +1,4 @@
-#include "./MainView.hpp"
+#include "../../../include/views/main/MainView.hpp"
 
 void MainView::createWindow() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
