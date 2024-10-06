@@ -10,6 +10,7 @@ perf.data*
 *.code-workspace
 *.hrd
 *.stdout
+.cache
 
 results/
 

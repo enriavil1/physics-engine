@@ -1,9 +1,10 @@
-
 [submodule "imgui"]
 	path = src/include/imgui
 	url = https://github.com/enriavil1/imgui-cmake.git 	
   branch = docking
 
-[submodule "SDL"]
+
+[submodule "src/include/SDL"]
 	path = src/include/SDL
 	url = https://github.com/libsdl-org/SDL.git
+
