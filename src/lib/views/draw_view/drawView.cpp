@@ -1,4 +1,8 @@
 #include "../../../include/views/draw_view/drawView.hpp"
+#include "../../../include/views/ViewObjectsConfig.hpp"
+
+#include "../../../include/physics/physics_objects/circleObject.hpp"
+#include "../../../include/physics/systemState.hpp"
 
 ImGuiWindowFlags DrawView::s_window_flags = ImGuiWindowFlags_NoCollapse;
 

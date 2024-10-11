@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "../../../include/views/main/MainView.hpp"
 
 void MainView::createWindow() {
@@ -135,7 +137,7 @@ void MainView::quitView() {
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 
-  SDL_GL_DeleteContext(this->gl_context);
+  SDL_GL_DestroyContext(this->gl_context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
 }

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <imgui.h>
 #include <vector>
 
-#include "../../../imgui/imgui.h"
 #include "../../forces/force.hpp"
 
 class PhysicsObject {

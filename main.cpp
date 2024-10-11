@@ -1,11 +1,9 @@
 #include "imgui/imgui.h"
 
-#include "src/physics/systemState.hpp"
-
-#include "src/views/ViewObjectsConfig.hpp"
-#include "src/views/ViewStats.hpp"
-#include "src/views/drawView/drawView.hpp"
-#include "src/views/main/MainView.hpp"
+#include "views/ViewObjectsConfig.hpp"
+#include "views/ViewStats.hpp"
+#include "views/draw_view/drawView.hpp"
+#include "views/main/MainView.hpp"
 
 #define SUB_STEP 8.0f
 
