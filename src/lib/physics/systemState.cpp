@@ -1,4 +1,4 @@
-#include "./systemState.hpp"
+#include "../../include/physics/systemState.hpp"
 
 #define MINIMUM_CELL_WIDTH 2
 #define MINIMUM_CELL_HEIGHT 2

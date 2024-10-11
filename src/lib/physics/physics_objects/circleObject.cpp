@@ -1,7 +1,7 @@
 #define BOUNCE_PERCENTAGE -0.80f
 #define MIN_BOUNCE 0.1f
 
-#include "./circleObject.hpp"
+#include "../../../include/physics/physics_objects/circleObject.hpp"
 
 ImVec2 CircleObject::getDistanceFromCenter() const {
   return ImVec2(this->radius, this->radius);

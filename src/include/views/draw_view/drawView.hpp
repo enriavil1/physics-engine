@@ -2,11 +2,6 @@
 
 #include "../ViewPort.hpp"
 
-#include "../ViewObjectsConfig.hpp"
-
-#include "../../physics/physics_objects/circleObject.hpp"
-#include "../../physics/systemState.hpp"
-
 class DrawView : ViewPort {
 private:
   static ImGuiWindowFlags s_window_flags;

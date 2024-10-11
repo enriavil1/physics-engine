@@ -1,4 +1,4 @@
-#include "./ViewObjectsConfig.hpp"
+#include "../../include/views/ViewObjectsConfig.hpp"
 #include "../physics/systemState.hpp"
 
 #define RADIUS_MIN 2.0f

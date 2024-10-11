@@ -1,23 +1,13 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <utility>
-
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_sdl3.h>
+
 #include "../ViewPort.hpp"
-
-#include "../../../imgui/backends/imgui_impl_opengl3.h"
-#include "../../../imgui/backends/imgui_impl_sdl3.h"
-#include "../../../imgui/imgui.h"
-
-#include "../../physics/physics_objects/circleObject.hpp"
-#include "../../physics/systemState.hpp"
-
-#include "../ViewObjectsConfig.hpp"
-#include "../ViewStats.hpp"
 
 class MainView : ViewPort {
 private:

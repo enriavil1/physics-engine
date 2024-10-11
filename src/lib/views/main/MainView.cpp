@@ -1,7 +1,9 @@
-#include "./MainView.hpp"
+#include <iostream>
+
+#include "../../../include/views/main/MainView.hpp"
 
 void MainView::createWindow() {
-  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+  if (!SDL_Init(SDL_INIT_VIDEO)) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
     return;
   }
@@ -135,7 +137,7 @@ void MainView::quitView() {
   ImGui_ImplSDL3_Shutdown();
   ImGui::DestroyContext();
 
-  SDL_GL_DeleteContext(this->gl_context);
+  SDL_GL_DestroyContext(this->gl_context);
   SDL_DestroyWindow(this->window);
   SDL_Quit();
 }
