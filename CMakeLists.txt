@@ -10,7 +10,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CURRENT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 set(CMAKE_CURRENT_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/lib)
 
-set(USE_SDL ON)
+set(USE_SDL
+    ON
+    CACHE FORCE ON)
 
 # Define build options (e.g., build with SDL, ImGui)
 option(BUILD_SDL "Build with SDL support" ON)
@@ -37,16 +39,16 @@ if(BUILD_OPENGL)
 endif()
 
 # Add and link dependencies based on build options
-if(BUILD_IMGUI)
-  message(STATUS "[${PROJECT_NAME}] Adding imgui as subdirectory")
-  add_subdirectory(${CMAKE_CURRENT_INCLUDE_DIR}/imgui)
-  target_link_libraries(LibModule PUBLIC imgui)
-endif()
-
 if(BUILD_SDL)
   message(STATUS "[${PROJECT_NAME}] Adding SDL3")
   add_subdirectory(${CMAKE_CURRENT_INCLUDE_DIR}/SDL)
   target_link_libraries(LibModule PUBLIC SDL3::SDL3)
+endif()
+
+if(BUILD_IMGUI)
+  message(STATUS "[${PROJECT_NAME}] Adding imgui as subdirectory")
+  add_subdirectory(${CMAKE_CURRENT_INCLUDE_DIR}/imgui)
+  target_link_libraries(LibModule PUBLIC imgui)
 endif()
 
 add_executable(${PROJECT_NAME} main.cpp)
