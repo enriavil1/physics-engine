@@ -3,7 +3,7 @@
 #include "../../../include/views/main/MainView.hpp"
 
 void MainView::createWindow() {
-  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+  if (!SDL_Init(SDL_INIT_VIDEO)) {
     printf("Error: SDL_Init(): %s\n", SDL_GetError());
     return;
   }
